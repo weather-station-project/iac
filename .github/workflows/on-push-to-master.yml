@@ -23,7 +23,7 @@ jobs:
       - run: terraform validate
   deploy:
     needs: validate-tf
-    uses: .github/workflows/deploy-infrastructure.yml@master
+    uses: ./.github/workflows/deploy-infrastructure.yml@master
     with:
       terraform-version: ~1.10.0
       env-name: staging
