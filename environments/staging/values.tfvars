@@ -1,0 +1,1 @@
+namespace = "weather-stationg-staging"

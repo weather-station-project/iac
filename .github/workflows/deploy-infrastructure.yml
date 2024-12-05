@@ -1,0 +1,55 @@
+name: Deploy infrastructure
+on:
+  workflow_call:
+    inputs:
+      terraform-version:
+        description: The Terraform version to be used
+        type: string
+        required: true
+      env-name:
+        description: Environment name (staging or production)
+        type: string
+        required: true
+#      pmp-rx-backend-image-tag:
+#        description: Container image tag for pmp-rx-backend (only Reside)
+#        type: string
+#        required: false
+#        default: latest
+    secrets:
+      host:
+        description: Host to deploy the infrastructure
+        required: true
+      client-certificate:
+        description: Client certificate data in base64
+        required: true
+      client-key:
+        description: Client key data in base64
+        required: true
+      cluster-ca-certificate:
+        description: Client CA certificate
+        required: true
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    env:
+      KUBE_HOST: ${{ secrets.host }}
+      KUBE_CLIENT_CERT_DATA: ${{ secrets.client-certificate }}
+      KUBE_CLIENT_KEY_DATA: ${{ secrets.client-key }}
+      KUBE_CLUSTER_CA_CERT_DATA: ${{ secrets.cluster-ca-certificate }}
+      CONFIG_PATH: environments/${{ inputs.env-name }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_wrapper: false
+          terraform_version: ${{ inputs.terraform-version }}
+      - name: Terraform init
+        run: terraform init -input=false"
+      - name: Terraform validate
+        run: terraform validate
+      - name: Terraform plan
+        run: terraform plan -compact-warnings -var-file="${{ env.CONFIG_PATH }}/values.tfvars"
+      - name: Terraform apply
+        run: terraform apply -compact-warnings -auto-approve -var-file="${{ env.CONFIG_PATH }}/values.tfvars"
