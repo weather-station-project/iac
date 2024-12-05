@@ -10,9 +10,7 @@ terraform {
     }
   }
 
-  backend "kubernetes" {
-    secret_suffix    = "state"
-  }
+  backend "kubernetes" {}
 }
 
 resource "kubernetes_namespace" "namespace" {

@@ -46,7 +46,7 @@ jobs:
           terraform_wrapper: false
           terraform_version: ${{ inputs.terraform-version }}
       - name: Terraform init
-        run: terraform init -input=false
+        run: terraform init -input=false -backend-config="${{ env.CONFIG_PATH }}/kubernetes.tfbackend"
       - name: Terraform validate
         run: terraform validate
       - name: Terraform plan
