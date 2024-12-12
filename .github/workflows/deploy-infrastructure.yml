@@ -16,28 +16,15 @@ on:
 #        required: false
 #        default: latest
     secrets:
-      host:
-        description: Host to deploy the infrastructure
-        required: true
-      client-certificate:
-        description: Client certificate data in base64
-        required: true
-      client-key:
-        description: Client key data in base64
-        required: true
-      cluster-ca-certificate:
-        description: Client CA certificate
+      kubernetes-config-base64:
+        description: Configuration file for Kubernetes in base64
         required: true
 jobs:
   deploy:
     runs-on: ubuntu-latest
     env:
-      KUBERNETES_MASTER: ${{ secrets.host }}
-      KUBE_HOST: ${{ secrets.host }}
-      KUBE_CLIENT_CERT_DATA: ${{ secrets.client-certificate }}
-      KUBE_CLIENT_KEY_DATA: ${{ secrets.client-key }}
-      KUBE_CLUSTER_CA_CERT_DATA: ${{ secrets.cluster-ca-certificate }}
       CONFIG_PATH: environments/${{ inputs.env-name }}
+      KUBERNETES_CONFIG_PATH: kubernetes.yaml
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -46,6 +33,11 @@ jobs:
         with:
           terraform_wrapper: false
           terraform_version: ${{ inputs.terraform-version }}
+      - name: Extract Kubernetes configuration
+        uses: timheuer/base64-to-file@v1.2
+        with:
+          fileName: ${{ env.KUBERNETES_CONFIG_PATH }}
+          encodedString: ${{ secrets.kubernetes-config-base64 }}
       - name: Terraform init
         run: terraform init -input=false -backend-config="${{ env.CONFIG_PATH }}/kubernetes.tfbackend"
       - name: Terraform validate

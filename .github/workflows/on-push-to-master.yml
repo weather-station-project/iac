@@ -29,7 +29,4 @@ jobs:
       terraform-version: ~1.10.0
       env-name: staging
     secrets:
-      host: ${{ secrets.KUBERNETES_HOST }}
-      client-certificate: ${{ secrets.KUBERNETES_CLIENT_CERTIFICATE_DATA }}
-      client-key: ${{ secrets.KUBERNETES_CLIENT_KEY_DATA }}
-      cluster-ca-certificate: ${{ secrets.KUBERNETES_CERTIFICATE_AUTHORITY_DATA }}
+      kubernetes-config-base64: ${{ secrets.KUBERNETES_CONFIG_BASE64 }}
