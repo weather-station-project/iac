@@ -24,7 +24,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       CONFIG_PATH: environments/${{ inputs.env-name }}
-      KUBERNETES_CONFIG_PATH: kubernetes.yaml
+      KUBE_CONFIG_PATH: kubernetes.yaml
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -36,7 +36,7 @@ jobs:
       - name: Extract Kubernetes configuration
         uses: timheuer/base64-to-file@v1.2
         with:
-          fileName: ${{ env.KUBERNETES_CONFIG_PATH }}
+          fileName: ${{ env.KUBE_CONFIG_PATH }}
           encodedString: ${{ secrets.kubernetes-config-base64 }}
       - name: Terraform init
         run: terraform init -input=false -backend-config="${{ env.CONFIG_PATH }}/kubernetes.tfbackend"
