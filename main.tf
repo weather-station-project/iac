@@ -10,7 +10,9 @@ terraform {
     }
   }
 
-  backend "kubernetes" {}
+  backend "kubernetes" {
+    load_config_file = false
+  }
 }
 
 resource "kubernetes_namespace" "namespace" {
