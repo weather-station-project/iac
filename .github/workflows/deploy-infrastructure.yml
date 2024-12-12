@@ -32,6 +32,7 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     env:
+      KUBERNETES_MASTER: ${{ secrets.host }}
       KUBE_HOST: ${{ secrets.host }}
       KUBE_CLIENT_CERT_DATA: ${{ secrets.client-certificate }}
       KUBE_CLIENT_KEY_DATA: ${{ secrets.client-key }}
