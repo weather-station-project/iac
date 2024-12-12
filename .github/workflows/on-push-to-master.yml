@@ -1,3 +1,4 @@
+# Deploy infrastructure on staging environment
 name: on-push-to-master
 concurrency:
   group: on-push-to-master
