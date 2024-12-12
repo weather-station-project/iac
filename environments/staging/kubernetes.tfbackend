@@ -1,2 +1,2 @@
 secret_suffix = "state"
-KUBERNETES_MASTER = "test"
+host = "https://test:443"
