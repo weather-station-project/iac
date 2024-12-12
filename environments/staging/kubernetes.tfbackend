@@ -1,1 +1,2 @@
 secret_suffix = "state"
+KUBERNETES_MASTER = "test"
