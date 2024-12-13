@@ -1,4 +1,6 @@
-provider "kubernetes" {}
+provider "kubernetes" {
+  config_path = "./kubernetes.yaml"
+}
 
 terraform {
   required_version = ">= 1.10.0"
@@ -10,9 +12,7 @@ terraform {
     }
   }
 
-  backend "kubernetes" {
-    load_config_file = false
-  }
+  backend "kubernetes" {}
 }
 
 resource "kubernetes_namespace" "namespace" {
