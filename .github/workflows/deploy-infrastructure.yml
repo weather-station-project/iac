@@ -39,10 +39,10 @@ jobs:
           fileName: ${{ env.KUBE_CONFIG_PATH }}
           encodedString: ${{ secrets.kubernetes-config-base64 }}
       - name: Terraform init
-        run: terraform init -input=false -parallelism=1 -backend-config="${{ env.CONFIG_PATH }}/kubernetes.tfbackend"
+        run: terraform init -input=false -backend-config="${{ env.CONFIG_PATH }}/kubernetes.tfbackend"
       - name: Terraform validate
         run: terraform validate
       - name: Terraform plan
-        run: terraform plan -compact-warnings -parallelism=1 -var-file="${{ env.CONFIG_PATH }}/values.tfvars"
+        run: terraform plan -compact-warnings -var-file="${{ env.CONFIG_PATH }}/values.tfvars"
       - name: Terraform apply
-        run: terraform apply -compact-warnings -auto-approve -parallelism=1 -var-file="${{ env.CONFIG_PATH }}/values.tfvars"
+        run: terraform apply -compact-warnings -auto-approve -var-file="${{ env.CONFIG_PATH }}/values.tfvars"
