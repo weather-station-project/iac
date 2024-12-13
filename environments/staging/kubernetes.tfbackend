@@ -1,1 +1,2 @@
 secret_suffix = "state"
+config_path = "kubernetes.yaml"

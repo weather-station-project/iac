@@ -39,7 +39,7 @@ jobs:
           fileName: ${{ env.KUBE_CONFIG_PATH }}
           encodedString: ${{ secrets.kubernetes-config-base64 }}
       - name: Terraform init
-        run: terraform init -input=false --backend=false
+        run: terraform init -input=false -backend-config="${{ env.CONFIG_PATH }}/kubernetes.tfbackend"
       - name: Terraform validate
         run: terraform validate
       - name: Terraform plan
