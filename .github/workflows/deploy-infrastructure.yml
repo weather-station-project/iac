@@ -43,6 +43,6 @@ jobs:
       - name: Terraform validate
         run: terraform validate
       - name: Terraform plan
-        run: terraform plan -compact-warnings --backend=false
+        run: terraform plan -compact-warnings -var-file="${{ env.CONFIG_PATH }}/values.tfvars"
       - name: Terraform apply
-        run: terraform apply -compact-warnings -auto-approve --backend=false
+        run: terraform apply -compact-warnings -auto-approve -var-file="${{ env.CONFIG_PATH }}/values.tfvars"
