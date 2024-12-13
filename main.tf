@@ -12,7 +12,9 @@ terraform {
     }
   }
 
-  backend "kubernetes" {}
+  backend "kubernetes" {
+    config_path = "./kubernetes.yaml"
+  }
 }
 
 resource "kubernetes_namespace" "namespace" {
