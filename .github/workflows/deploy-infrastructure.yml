@@ -24,7 +24,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       CONFIG_PATH: environments/${{ inputs.env-name }}
-      KUBE_CONFIG_PATH: kubernetes.yaml
+      KUBE_CONFIG_PATH: .kube/config
     steps:
       - name: Checkout code
         uses: actions/checkout@v4

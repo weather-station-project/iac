@@ -1,3 +1,3 @@
 secret_suffix = "state"
-config_path = "kubernetes.yaml"
+config_path = ".kube/config"
 load_config_file = true
