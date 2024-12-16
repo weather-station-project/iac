@@ -34,13 +34,14 @@ jobs:
           terraform_wrapper: false
           terraform_version: ${{ inputs.terraform-version }}
       - name: Extract Kubernetes configuration
+        id: k8s-config
         uses: timheuer/base64-to-file@v1.2
         with:
           fileName: config
           fileDir: ~/.kube/
           encodedString: ${{ secrets.kubernetes-config-base64 }}
       - name: Visualize Kubernetes configuration
-        run: cat ${{ env.KUBE_CONFIG_PATH }}
+        run: cat ${{ steps.write_file.outputs.filePath }}
       - name: Terraform init
         run: terraform init -input=false -backend-config="${{ env.CONFIG_PATH }}/kubernetes.tfbackend"
       - name: Terraform validate
