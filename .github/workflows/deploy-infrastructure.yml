@@ -24,7 +24,6 @@ jobs:
     runs-on: ubuntu-latest
     env:
       CONFIG_PATH: environments/${{ inputs.env-name }}
-      KUBE_CONFIG_PATH: .kube/config
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -40,8 +39,8 @@ jobs:
           fileName: config
           fileDir: .kube/
           encodedString: ${{ secrets.kubernetes-config-base64 }}
-      - name: Visualize Kubernetes configuration
-        run: cat ${{ steps.k8s-config.outputs.filePath }}
+      - name: Create ENV var with config path
+        run: echo "KUBE_CONFIG_PATH=${{ steps.k8s-config.outputs.filePath }}" >> $GITHUB_ENV
       - name: Terraform init
         run: terraform init -input=false -backend-config="${{ env.CONFIG_PATH }}/kubernetes.tfbackend"
       - name: Terraform validate
