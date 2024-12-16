@@ -24,7 +24,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       CONFIG_PATH: environments/${{ inputs.env-name }}
-      KUBE_CONFIG_PATH: ~/.kube/config
+      KUBE_CONFIG_PATH: .kube/config
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -38,10 +38,10 @@ jobs:
         uses: timheuer/base64-to-file@v1.2
         with:
           fileName: config
-          fileDir: ~/.kube/
+          fileDir: .kube/
           encodedString: ${{ secrets.kubernetes-config-base64 }}
       - name: Visualize Kubernetes configuration
-        run: ls -la
+        run: cat ${{ steps.k8s-config.outputs.filePath }}
       - name: Terraform init
         run: terraform init -input=false -backend-config="${{ env.CONFIG_PATH }}/kubernetes.tfbackend"
       - name: Terraform validate
