@@ -41,7 +41,7 @@ jobs:
           fileDir: ~/.kube/
           encodedString: ${{ secrets.kubernetes-config-base64 }}
       - name: Visualize Kubernetes configuration
-        run: cat ${{ steps.write_file.outputs.filePath }}
+        run: cat ${{ steps.k8s-config.outputs.filePath }}
       - name: Terraform init
         run: terraform init -input=false -backend-config="${{ env.CONFIG_PATH }}/kubernetes.tfbackend"
       - name: Terraform validate
