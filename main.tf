@@ -1,6 +1,4 @@
-provider "kubernetes" {
-  config_path = ".kube/config"
-}
+provider "kubernetes" {}
 
 terraform {
   required_version = ">= 1.10.0"

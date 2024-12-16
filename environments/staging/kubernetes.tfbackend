@@ -1,3 +1,2 @@
 secret_suffix = "state"
-config_path = ".kube/config"
 load_config_file = true
