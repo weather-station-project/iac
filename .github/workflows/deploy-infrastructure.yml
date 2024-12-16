@@ -37,7 +37,7 @@ jobs:
         uses: timheuer/base64-to-file@v1.2
         with:
           fileName: config
-          fileDir: ~/.kube
+          fileDir: ~/.kube/
           encodedString: ${{ secrets.kubernetes-config-base64 }}
       - name: Terraform init
         run: terraform init -input=false -backend-config="${{ env.CONFIG_PATH }}/kubernetes.tfbackend"
