@@ -1,1 +1,1 @@
-namespace = "weather-stationg-staging"
+namespace = "weather-station-staging"
