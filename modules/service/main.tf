@@ -42,3 +42,24 @@ resource "kubernetes_role_binding" "pod_executor_binding" {
     namespace = var.namespace
   }
 }
+
+resource "kubernetes_service" "service" {
+  metadata {
+    name      = var.name
+    namespace = var.namespace
+  }
+
+  spec {
+    type       = "NodePort"
+    cluster_ip = "None"
+
+    port {
+      port        = var.port
+      target_port = var.port
+    }
+
+    selector = {
+      app = var.name
+    }
+  }
+}

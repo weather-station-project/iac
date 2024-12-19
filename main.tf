@@ -22,6 +22,7 @@ resource "kubernetes_namespace" "namespace" {
 module "service" {
   source = "./modules/service"
 
-  namespace = kubernetes_namespace.namespace.metadata[0].name
+  namespace = var.namespace
   name      = "database"
+  port      = 5432
 }
