@@ -63,3 +63,105 @@ resource "kubernetes_service" "service" {
     }
   }
 }
+
+resource "kubernetes_persistent_volume" "pv" {
+  for_each = { for vol in var.volumes : vol.name => vol }
+
+  metadata {
+    name      = "${var.name}-${each.value.name}"
+    namespace = var.namespace
+  }
+
+  spec {
+    capacity = {
+      storage = each.value.capacity
+    }
+
+    access_modes = [each.value.read_only ? "ReadOnlyMany" : "ReadWriteOnce"]
+
+    host_path = {
+      path = each.value.host_path
+    }
+  }
+}
+
+resource "kubernetes_persistent_volume_claim" "pvc" {
+  for_each = { for vol in var.volumes : vol.name => vol }
+
+  metadata {
+    name      = "${var.name}-${each.value.name}"
+    namespace = var.namespace
+  }
+
+  spec {
+    access_modes = [each.value.read_only ? "ReadOnlyMany" : "ReadWriteOnce"]
+
+    resources {
+      requests = {
+        storage = each.value.capacity
+      }
+    }
+  }
+}
+
+resource "kubernetes_stateful_set" "statefulset" {
+  metadata {
+    name      = var.name
+    namespace = var.namespace
+  }
+
+  spec {
+    service_name = var.name
+    replicas     = 1
+
+    selector {
+      match_labels = {
+        app = var.name
+      }
+    }
+
+    template {
+      metadata {
+        labels = {
+          app = var.name
+        }
+      }
+
+      spec {
+        service_account_name = kubernetes_service_account.service_account.metadata[0].name
+
+        container {
+          name              = var.name
+          image             = var.docker_image
+          image_pull_policy = "IfNotPresent"
+
+          port {
+            container_port = var.port
+            protocol       = "TCP"
+          }
+
+          dynamic "volume_mount" {
+            for_each = var.volumes
+
+            content {
+              mount_path = volume_mount.value.container_path
+              name       = volume_mount.value.name
+            }
+          }
+        }
+      }
+    }
+
+    dynamic "volumes" {
+      for_each = var.volumes
+
+      content {
+        name = volumes.value.name
+
+        persistent_volume_claim = {
+          claim_name = kubernetes_persistent_volume_claim.pvc[volumes.value.name].metadata[0].name
+        }
+      }
+    }
+  }
+}
