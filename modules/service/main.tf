@@ -68,7 +68,7 @@ resource "kubernetes_persistent_volume" "pv" {
   for_each = { for vol in var.volumes : vol.name => vol }
 
   metadata {
-    name      = "${var.name}-${each.value.name}"
+    name = "${var.name}-${each.value.name}"
   }
 
   spec {
