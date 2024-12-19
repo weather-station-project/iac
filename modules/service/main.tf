@@ -51,7 +51,7 @@ resource "kubernetes_service" "service" {
 
   spec {
     type       = "NodePort"
-    cluster_ip = "None"
+    cluster_ip = null
 
     port {
       port        = var.port
