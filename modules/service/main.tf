@@ -69,7 +69,6 @@ resource "kubernetes_persistent_volume" "pv" {
 
   metadata {
     name      = "${var.name}-${each.value.name}"
-    namespace = var.namespace
   }
 
   spec {
