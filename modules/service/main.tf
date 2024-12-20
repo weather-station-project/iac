@@ -151,17 +151,17 @@ resource "kubernetes_stateful_set" "statefulset" {
             }
           }
         }
-      }
-    }
 
-    dynamic "volume" {
-      for_each = { for vol in var.volumes : vol.name => vol }
+        dynamic "volume" {
+          for_each = { for vol in var.volumes : vol.name => vol }
 
-      content {
-        name = volume.value.name
+          content {
+            name = volume.value.name
 
-        persistent_volume_claim = {
-          claim_name = kubernetes_persistent_volume_claim.pvc[volume.value.name].metadata[0].name
+            persistent_volume_claim = {
+              claim_name = kubernetes_persistent_volume_claim.pvc[volume.value.name].metadata[0].name
+            }
+          }
         }
       }
     }
