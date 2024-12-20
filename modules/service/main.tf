@@ -104,6 +104,8 @@ resource "kubernetes_persistent_volume_claim" "pvc" {
       }
     }
   }
+
+  wait_until_bound = false
 }
 
 resource "kubernetes_stateful_set" "statefulset" {
