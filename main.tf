@@ -29,7 +29,7 @@ module "service" {
 
   volumes = [
     {
-      name           = "TimeZone"
+      name           = "timezone"
       host_path      = "/etc/timezone"
       container_path = "/etc/timezone"
       read_only      = true
@@ -37,7 +37,7 @@ module "service" {
       type           = "File"
     },
     {
-      name           = "LocalTime"
+      name           = "localtime"
       host_path      = "/etc/localtime"
       container_path = "/etc/localtime"
       read_only      = true
