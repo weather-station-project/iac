@@ -33,7 +33,7 @@ module "service" {
       host_path      = "/etc/timezone"
       container_path = "/etc/timezone"
       read_only      = true
-      capacity       = "1Ki"
+      capacity       = "1Mi"
       type           = "File"
     },
     {
@@ -41,7 +41,7 @@ module "service" {
       host_path      = "/etc/localtime"
       container_path = "/etc/localtime"
       read_only      = true
-      capacity       = "1Ki"
+      capacity       = "1Mi"
       type           = "File"
     }
   ]
