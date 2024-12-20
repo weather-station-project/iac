@@ -22,6 +22,7 @@ variable "volumes" {
     container_path = string
     read_only      = bool
     capacity       = string
+    type           = string # Allowed values are "" (default), DirectoryOrCreate, Directory, FileOrCreate, File, Socket, CharDevice and BlockDevice
   }))
 }
 

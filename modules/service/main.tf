@@ -65,7 +65,7 @@ resource "kubernetes_service" "service" {
 }
 
 resource "kubernetes_persistent_volume" "pv" {
-  for_each = { for vol in var.volumes : vol.name => vol }
+  for_each = var.volumes
 
   metadata {
     name = "${var.name}-${each.value.name}"
@@ -78,14 +78,17 @@ resource "kubernetes_persistent_volume" "pv" {
 
     access_modes = [each.value.read_only ? "ReadOnlyMany" : "ReadWriteOnce"]
 
-    host_path = {
-      path = each.value.host_path
+    persistent_volume_source {
+      host_path {
+        path = each.value.host_path
+        type = each.value.type
+      }
     }
   }
 }
 
 resource "kubernetes_persistent_volume_claim" "pvc" {
-  for_each = { for vol in var.volumes : vol.name => vol }
+  for_each = var.volumes
 
   metadata {
     name      = "${var.name}-${each.value.name}"
@@ -151,14 +154,14 @@ resource "kubernetes_stateful_set" "statefulset" {
       }
     }
 
-    dynamic "volumes" {
+    dynamic "volume" {
       for_each = var.volumes
 
       content {
-        name = volumes.value.name
+        name = volume.value.name
 
         persistent_volume_claim = {
-          claim_name = kubernetes_persistent_volume_claim.pvc[volumes.value.name].metadata[0].name
+          claim_name = kubernetes_persistent_volume_claim.pvc[volume.value.name].metadata[0].name
         }
       }
     }
