@@ -42,7 +42,7 @@ module "service" {
       container_path = "/etc/localtime"
       read_only      = true
       capacity       = "1Ki"
-        type           = "File"
+      type           = "File"
     }
   ]
 }
