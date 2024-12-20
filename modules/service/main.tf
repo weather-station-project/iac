@@ -65,7 +65,7 @@ resource "kubernetes_service" "service" {
 }
 
 resource "kubernetes_persistent_volume" "pv" {
-  for_each = var.volumes
+  for_each = { for vol in var.volumes : vol.name => vol }
 
   metadata {
     name = "${var.name}-${each.value.name}"
@@ -88,7 +88,7 @@ resource "kubernetes_persistent_volume" "pv" {
 }
 
 resource "kubernetes_persistent_volume_claim" "pvc" {
-  for_each = var.volumes
+  for_each = { for vol in var.volumes : vol.name => vol }
 
   metadata {
     name      = "${var.name}-${each.value.name}"
@@ -143,7 +143,7 @@ resource "kubernetes_stateful_set" "statefulset" {
           }
 
           dynamic "volume_mount" {
-            for_each = var.volumes
+            for_each = { for vol in var.volumes : vol.name => vol }
 
             content {
               mount_path = volume_mount.value.container_path
@@ -155,7 +155,7 @@ resource "kubernetes_stateful_set" "statefulset" {
     }
 
     dynamic "volume" {
-      for_each = var.volumes
+      for_each = { for vol in var.volumes : vol.name => vol }
 
       content {
         name = volume.value.name
