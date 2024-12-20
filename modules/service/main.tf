@@ -158,7 +158,7 @@ resource "kubernetes_stateful_set" "statefulset" {
           content {
             name = volume.value.name
 
-            persistent_volume_claim = {
+            persistent_volume_claim {
               claim_name = kubernetes_persistent_volume_claim.pvc[volume.value.name].metadata[0].name
             }
           }
