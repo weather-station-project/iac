@@ -133,6 +133,7 @@ resource "kubernetes_stateful_set" "statefulset" {
 
       spec {
         service_account_name = kubernetes_service_account.service_account.metadata[0].name
+        restart_policy       = "Always"
 
         container {
           name              = var.name
@@ -150,6 +151,15 @@ resource "kubernetes_stateful_set" "statefulset" {
             content {
               mount_path = volume_mount.value.container_path
               name       = volume_mount.value.name
+            }
+          }
+
+          dynamic "env" {
+            for_each = var.environment_variables
+
+            content {
+              name  = env.key
+              value = env.value
             }
           }
         }

@@ -30,3 +30,9 @@ variable "docker_image" {
   description = "Docker image to use"
   type        = string
 }
+
+variable "environment_variables" {
+  description = "Environment variables to set"
+  type        = map(string)
+  sensitive   = true
+}

@@ -45,4 +45,10 @@ module "service" {
       type           = "File"
     }
   ]
+
+  environment_variables = {
+    POSTGRES_INITDB_ARGS = "--data-checksums"
+    TZ                   = "Europe/Madrid"
+    PGTZ                 = "Europe/Madrid"
+  }
 }
