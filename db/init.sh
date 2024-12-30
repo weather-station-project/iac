@@ -2,7 +2,7 @@ set -e
 
 psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" <<-EOSQL
     -- USERS
-    CREATE USER admin WITH SUPERUSER PASSWORD '$ADMIN_USER_PASSWORD';
+    CREATE USER admin WITH SUPERUSER PASSWORD '$DATABASE_ADMIN_USER_PASSWORD';
     CREATE USER read_write WITH PASSWORD '$DATABASE_READ_ONLY_USER_PASSWORD';
     CREATE USER read_only WITH PASSWORD '$DATABASE_READ_WRITE_USER_PASSWORD';
 
@@ -16,7 +16,7 @@ psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" <<-E
     -- Table ambient_temperatures
     CREATE TABLE ambient_temperatures (
         id BIGINT GENERATED ALWAYS AS IDENTITY,
-        temperature NUMERIC(5, 2) NOT NULL,
+        temperature SMALLINT NOT NULL,
         date_time TIMESTAMPTZ(0) NOT NULL,
 
         CONSTRAINT ambient_temperatures_pkey PRIMARY KEY (id)
@@ -29,7 +29,7 @@ psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" <<-E
     -- Table ambient_temperatures
     CREATE TABLE ground_temperatures (
         id BIGINT GENERATED ALWAYS AS IDENTITY,
-        temperature NUMERIC(5, 2) NOT NULL,
+        temperature SMALLINT NOT NULL,
         date_time TIMESTAMPTZ(0) NOT NULL,
 
         CONSTRAINT ground_temperatures_pkey PRIMARY KEY (id)
@@ -42,8 +42,8 @@ psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" <<-E
     -- Table air_measurements
     CREATE TABLE air_measurements (
         id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-        pressure NUMERIC(6, 2) NOT NULL,
-        humidity NUMERIC(5, 2) NOT NULL,
+        pressure SMALLINT NOT NULL,
+        humidity SMALLINT NOT NULL,
         date_time TIMESTAMPTZ(0) NOT NULL,
 
         CONSTRAINT air_measurements_pkey PRIMARY KEY (id)
@@ -57,7 +57,7 @@ psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" <<-E
     CREATE TABLE wind_measurements (
         id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
         direction VARCHAR(4) NOT NULL,
-        speed NUMERIC(5, 2) NOT NULL,
+        speed SMALLINT NOT NULL,
         date_time TIMESTAMPTZ(0) NOT NULL,
 
         CONSTRAINT wind_measurements_pkey PRIMARY KEY (id)
@@ -70,7 +70,7 @@ psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" <<-E
     -- Table rainfall
     CREATE TABLE rainfall (
         id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-        amount INT NOT NULL,
+        amount SMALLINT NOT NULL,
         date_time TIMESTAMPTZ(0) NOT NULL,
 
         CONSTRAINT rainfall_pkey PRIMARY KEY (id)
@@ -79,6 +79,18 @@ psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" <<-E
     GRANT SELECT, INSERT ON rainfall TO read_write;
     GRANT SELECT ON rainfall TO read_only;
     GRANT USAGE, SELECT ON SEQUENCE rainfall_id_seq TO read_write;
+
+    -- Table users
+    CREATE TABLE users (
+        login VARCHAR(20) NOT NULL,
+        password VARCHAR(200) NOT NULL,
+        role VARCHAR(5) NOT NULL,
+
+        CONSTRAINT users_pkey PRIMARY KEY (login)
+    );
+
+    GRANT SELECT ON users TO read_write;
+    GRANT SELECT ON users TO read_only;
 
     -- Indexes
     CREATE INDEX ambient_temperatures_date_time_idx ON ambient_temperatures(date_time);

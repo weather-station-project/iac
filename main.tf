@@ -19,6 +19,22 @@ resource "kubernetes_namespace" "namespace" {
   }
 }
 
+resource "random_password" "passwords" {
+  count            = 2
+  length           = 64
+  override_special = "!@#$%&*()-_=+[]{}<>?"
+
+  lower   = true
+  special = true
+  numeric = true
+  upper   = true
+
+  min_lower   = 15
+  min_special = 15
+  min_numeric = 15
+  min_upper   = 15
+}
+
 module "service" {
   source = "./modules/service"
 
@@ -47,8 +63,12 @@ module "service" {
   ]
 
   environment_variables = {
-    POSTGRES_INITDB_ARGS = "--data-checksums"
-    TZ                   = "Europe/Madrid"
-    PGTZ                 = "Europe/Madrid"
+    POSTGRES_INITDB_ARGS              = "--data-checksums"
+    POSTGRES_PASSWORD                 = "this-user-will-be-disabled"
+    DATABASE_ADMIN_USER_PASSWORD      = var.database_admin_password
+    DATABASE_READ_ONLY_USER_PASSWORD  = random_password.passwords[0].result
+    DATABASE_READ_WRITE_USER_PASSWORD = random_password.passwords[1].result
+    TZ                                = "Europe/Madrid"
+    PGTZ                              = "Europe/Madrid"
   }
 }
