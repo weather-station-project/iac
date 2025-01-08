@@ -198,6 +198,18 @@ resource "kubernetes_stateful_set" "statefulset" {
             }
           }
         }
+
+        dynamic "volume" {
+          for_each = { for cm in var.config_maps : cm.name => cm }
+
+          content {
+            name = volume.value.name
+
+            config_map {
+              name = volume.value.name
+            }
+          }
+        }
       }
     }
   }
