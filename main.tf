@@ -8,6 +8,11 @@ terraform {
       source  = "hashicorp/kubernetes"
       version = "2.34.0"
     }
+
+    random = {
+      source  = "hashicorp/random"
+      version = "3.6.3"
+    }
   }
 
   backend "kubernetes" {}
@@ -59,6 +64,14 @@ module "service" {
       read_only      = true
       capacity       = "1Mi"
       type           = "File"
+    }
+  ]
+
+  config_maps = [
+    {
+      name              = "init.sh"
+      content_file_path = "./db/init.sh"
+      container_path    = "/docker-entrypoint-initdb.d/init.sh"
     }
   ]
 

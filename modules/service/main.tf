@@ -117,7 +117,7 @@ resource "kubernetes_config_map" "config_map" {
   }
 
   data = {
-    "each.key" = file(each.value.content_file_path)
+    (each.key) = file(each.value.content_file_path)
   }
 }
 
