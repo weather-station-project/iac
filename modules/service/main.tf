@@ -202,7 +202,7 @@ resource "kubernetes_stateful_set" "statefulset" {
         dynamic "volume" {
           for_each = { for cm in var.config_maps : cm.name => cm }
 
-          config_map = {
+          config_map {
             name = volume.value.name
           }
         }
