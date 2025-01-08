@@ -167,6 +167,16 @@ resource "kubernetes_stateful_set" "statefulset" {
             }
           }
 
+          dynamic "volume_mount" {
+            for_each = { for cm in var.config_maps : cm.name => cm }
+
+            content {
+              name       = volume_mount.value.name
+              mount_path = volume_mount.value.container_path
+              sub_path   = volume_mount.value.name
+            }
+          }
+
           dynamic "env" {
             for_each = var.environment_variables
 
@@ -186,6 +196,14 @@ resource "kubernetes_stateful_set" "statefulset" {
             persistent_volume_claim {
               claim_name = kubernetes_persistent_volume_claim.pvc[volume.value.name].metadata[0].name
             }
+          }
+        }
+
+        dynamic "volume" {
+          for_each = { for cm in var.config_maps : cm.name => cm }
+
+          config_map = {
+            name = volume.value.name
           }
         }
       }
