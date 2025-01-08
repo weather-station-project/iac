@@ -42,7 +42,7 @@ jobs:
       - name: Create environment variables
         run: |
           echo "KUBE_CONFIG_PATH=${{ steps.k8s-config.outputs.filePath }}" >> $GITHUB_ENV
-          echo "TF_database_admin_password=${{ secrets.DB_ADMIN_PASSWORD }}" >> $GITHUB_ENV
+          echo "TF_VAR_database_admin_password=${{ secrets.DB_ADMIN_PASSWORD }}" >> $GITHUB_ENV
       - name: Terraform init
         run: terraform init -input=false -backend-config="${{ env.CONFIG_PATH }}/kubernetes.tfbackend"
       - name: Terraform validate
