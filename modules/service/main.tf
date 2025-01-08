@@ -108,6 +108,19 @@ resource "kubernetes_persistent_volume_claim" "pvc" {
   wait_until_bound = false
 }
 
+resource "kubernetes_config_map" "config_map" {
+  for_each = { for cm in var.config_maps : cm.name => cm }
+
+  metadata {
+    name      = each.key
+    namespace = var.namespace
+  }
+
+  data = {
+    "each.key" = file(each.value.content_file_path)
+  }
+}
+
 resource "kubernetes_stateful_set" "statefulset" {
   metadata {
     name      = var.name

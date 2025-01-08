@@ -26,6 +26,16 @@ variable "volumes" {
   }))
 }
 
+variable "config_maps" {
+  description = "List of config maps to mount"
+
+  type = list(object({
+    name              = string
+    content_file_path = string
+    container_path    = string
+  }))
+}
+
 variable "docker_image" {
   description = "Docker image to use"
   type        = string

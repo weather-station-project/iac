@@ -98,6 +98,10 @@ psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" <<-E
     CREATE INDEX air_measurements_date_time_idx ON air_measurements(date_time);
     CREATE INDEX wind_measurements_date_time_idx ON wind_measurements(date_time);
     CREATE INDEX rainfall_date_time_idx ON rainfall(date_time);
+
+    -- Insert users
+    INSERT INTO users (login, password, role) VALUES ('dashboard', crypt('$DATABASE_READ_ONLY_USER_PASSWORD', gen_salt('bf', 10)), 'read');
+    INSERT INTO users (login, password, role) VALUES ('sensors', crypt('$DATABASE_READ_WRITE_USER_PASSWORD', gen_salt('bf', 10)), 'write');
 EOSQL
 
 cat > /var/lib/postgresql/data/pg_hba.conf <<- EOF
