@@ -69,7 +69,7 @@ module "database" {
 
   config_maps = [
     {
-      name              = "database_init_script"
+      name              = "database-init-script"
       file_name         = "init.sh"
       content_file_path = "./db/init.sh"
       container_path    = "/docker-entrypoint-initdb.d/init.sh"
