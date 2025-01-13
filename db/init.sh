@@ -26,7 +26,7 @@ psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" <<-E
     GRANT SELECT ON ambient_temperatures TO read_only;
     GRANT USAGE, SELECT ON SEQUENCE ambient_temperatures_id_seq TO read_write;
 
-    -- Table ambient_temperatures
+    -- Table ground_temperatures
     CREATE TABLE ground_temperatures (
         id BIGINT GENERATED ALWAYS AS IDENTITY,
         temperature SMALLINT NOT NULL,
@@ -41,7 +41,7 @@ psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" <<-E
 
     -- Table air_measurements
     CREATE TABLE air_measurements (
-        id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+        id BIGINT GENERATED ALWAYS AS IDENTITY,
         pressure SMALLINT NOT NULL,
         humidity SMALLINT NOT NULL,
         date_time TIMESTAMPTZ(0) NOT NULL,
@@ -55,7 +55,7 @@ psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" <<-E
 
     -- Table wind_measurements
     CREATE TABLE wind_measurements (
-        id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+        id BIGINT GENERATED ALWAYS AS IDENTITY,
         direction VARCHAR(4) NOT NULL,
         speed SMALLINT NOT NULL,
         date_time TIMESTAMPTZ(0) NOT NULL,
@@ -69,7 +69,7 @@ psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" <<-E
 
     -- Table rainfall
     CREATE TABLE rainfall (
-        id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+        id BIGINT GENERATED ALWAYS AS IDENTITY,
         amount SMALLINT NOT NULL,
         date_time TIMESTAMPTZ(0) NOT NULL,
 
