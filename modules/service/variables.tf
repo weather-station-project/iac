@@ -8,8 +8,13 @@ variable "name" {
   type        = string
 }
 
-variable "port" {
-  description = "Port of the service"
+variable "container_port" {
+  description = "Internal port of the container"
+  type        = number
+}
+
+variable "external_port" {
+  description = "External port of the service"
   type        = number
 }
 

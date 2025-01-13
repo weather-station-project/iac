@@ -43,10 +43,11 @@ resource "random_password" "passwords" {
 module "database" {
   source = "./modules/service"
 
-  namespace    = var.namespace
-  name         = "database"
-  docker_image = "postgres:17-alpine"
-  port         = 5432
+  namespace      = var.namespace
+  name           = "database"
+  docker_image   = "postgres:17-alpine"
+  container_port = 5432
+  external_port  = 30032
 
   volumes = [
     {
