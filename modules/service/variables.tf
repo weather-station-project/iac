@@ -35,6 +35,7 @@ variable "config_maps" {
     name              = string
     content_file_path = string
     container_path    = string
+    file_name         = string
   }))
 
   default = []

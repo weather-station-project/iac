@@ -117,7 +117,7 @@ resource "kubernetes_config_map" "config_map" {
   }
 
   data = {
-    (each.key) = file(each.value.content_file_path)
+    (each.value.file_name) = file(each.value.content_file_path)
   }
 }
 
@@ -173,7 +173,7 @@ resource "kubernetes_stateful_set" "statefulset" {
             content {
               name       = volume_mount.value.name
               mount_path = volume_mount.value.container_path
-              sub_path   = volume_mount.value.name
+              sub_path   = volume_mount.value.file_name
             }
           }
 
@@ -191,7 +191,7 @@ resource "kubernetes_stateful_set" "statefulset" {
           for_each = { for vol in var.volumes : vol.name => vol }
 
           content {
-            name = replace(volume.value.name, ".", "")
+            name = volume.value.name
 
             persistent_volume_claim {
               claim_name = kubernetes_persistent_volume_claim.pvc[volume.value.name].metadata[0].name
@@ -203,7 +203,7 @@ resource "kubernetes_stateful_set" "statefulset" {
           for_each = { for cm in var.config_maps : cm.name => cm }
 
           content {
-            name = replace(volume.value.name, ".", "")
+            name = volume.value.name
 
             config_map {
               name = volume.value.name
