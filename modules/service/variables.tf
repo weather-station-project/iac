@@ -24,6 +24,8 @@ variable "volumes" {
     capacity       = string
     type           = string # Allowed values are "" (default), DirectoryOrCreate, Directory, FileOrCreate, File, Socket, CharDevice and BlockDevice
   }))
+
+  default = []
 }
 
 variable "config_maps" {
@@ -34,6 +36,8 @@ variable "config_maps" {
     content_file_path = string
     container_path    = string
   }))
+
+  default = []
 }
 
 variable "docker_image" {

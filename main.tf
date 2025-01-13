@@ -40,7 +40,7 @@ resource "random_password" "passwords" {
   min_upper   = 15
 }
 
-module "service" {
+module "database" {
   source = "./modules/service"
 
   namespace    = var.namespace
@@ -54,7 +54,7 @@ module "service" {
       host_path      = "/etc/timezone"
       container_path = "/etc/timezone"
       read_only      = true
-      capacity       = "1Mi"
+      capacity       = "1Ki"
       type           = "File"
     },
     {
@@ -62,7 +62,7 @@ module "service" {
       host_path      = "/etc/localtime"
       container_path = "/etc/localtime"
       read_only      = true
-      capacity       = "1Mi"
+      capacity       = "1Ki"
       type           = "File"
     }
   ]
@@ -85,3 +85,42 @@ module "service" {
     PGTZ                              = "Europe/Madrid"
   }
 }
+
+/*module "service" {
+  source     = "./modules/service"
+  depends_on = [module.database]
+
+  namespace    = var.namespace
+  name         = "backend"
+  docker_image = "weatherstationproject/backend:ALGUNA IMAGEN"
+  port         = 5432
+
+  volumes = [
+    {
+      name           = "timezone"
+      host_path      = "/etc/timezone"
+      container_path = "/etc/timezone"
+      read_only      = true
+      capacity       = "1Ki"
+      type           = "File"
+    },
+    {
+      name           = "localtime"
+      host_path      = "/etc/localtime"
+      container_path = "/etc/localtime"
+      read_only      = true
+      capacity       = "1Ki"
+      type           = "File"
+    }
+  ]
+
+  environment_variables = {
+    POSTGRES_INITDB_ARGS              = "--data-checksums"
+    POSTGRES_PASSWORD                 = "this-user-will-be-disabled"
+    DATABASE_ADMIN_USER_PASSWORD      = var.database_admin_password
+    DATABASE_READ_ONLY_USER_PASSWORD  = random_password.passwords[0].result
+    DATABASE_READ_WRITE_USER_PASSWORD = random_password.passwords[1].result
+    TZ                                = "Europe/Madrid"
+    PGTZ                              = "Europe/Madrid"
+  }
+}*/

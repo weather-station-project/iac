@@ -151,7 +151,7 @@ resource "kubernetes_stateful_set" "statefulset" {
         container {
           name              = var.name
           image             = var.docker_image
-          image_pull_policy = "IfNotPresent"
+          image_pull_policy = "Always"
 
           port {
             container_port = var.port
