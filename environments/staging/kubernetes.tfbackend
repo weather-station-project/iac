@@ -1,2 +1,2 @@
-secret_suffix = "state"
+secret_suffix = "staging-state"
 load_config_file = true
