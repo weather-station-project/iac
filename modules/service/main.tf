@@ -156,7 +156,7 @@ resource "kubernetes_stateful_set" "statefulset" {
           image_pull_policy = "Always"
 
           port {
-            container_port = var.port
+            container_port = var.container_port
             protocol       = "TCP"
           }
 
