@@ -54,8 +54,10 @@ resource "kubernetes_service" "service" {
     cluster_ip = null
 
     port {
-      port        = var.port
-      target_port = var.port
+      port        = var.container_port
+      target_port = var.container_port
+      node_port   = var.external_port
+      protocol    = "TCP"
     }
 
     selector = {
