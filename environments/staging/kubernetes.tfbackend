@@ -1,2 +1,2 @@
-secret_suffix = "staging-state"
+secret_suffix = "weather-station-staging-state"
 load_config_file = true
