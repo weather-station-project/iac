@@ -47,6 +47,50 @@ resource "kubernetes_service" "service" {
   }
 }
 
+resource "kubernetes_persistent_volume" "pv" {
+  for_each = { for vol in var.volumes : vol.name => vol }
+
+  metadata {
+    name = "${var.name}-${each.value.name}"
+  }
+
+  spec {
+    capacity = {
+      storage = each.value.capacity
+    }
+
+    access_modes = [each.value.read_only ? "ReadOnlyMany" : "ReadWriteOnce"]
+
+    persistent_volume_source {
+      host_path {
+        path = each.value.host_path
+        type = each.value.type
+      }
+    }
+  }
+}
+
+resource "kubernetes_persistent_volume_claim" "pvc" {
+  for_each = { for vol in var.volumes : vol.name => vol }
+
+  metadata {
+    name      = "${var.name}-${each.value.name}"
+    namespace = var.namespace
+  }
+
+  spec {
+    access_modes = [each.value.read_only ? "ReadOnlyMany" : "ReadWriteOnce"]
+
+    resources {
+      requests = {
+        storage = each.value.capacity
+      }
+    }
+  }
+
+  wait_until_bound = false
+}
+
 resource "kubernetes_config_map" "config_map" {
   for_each = { for cm in var.config_maps : cm.name => cm }
 
@@ -98,6 +142,15 @@ resource "kubernetes_stateful_set" "statefulset" {
           }
 
           dynamic "volume_mount" {
+            for_each = { for vol in var.volumes : vol.name => vol }
+
+            content {
+              mount_path = volume_mount.value.container_path
+              name       = volume_mount.value.name
+            }
+          }
+
+          dynamic "volume_mount" {
             for_each = { for cm in var.config_maps : cm.name => cm }
 
             content {
@@ -113,6 +166,18 @@ resource "kubernetes_stateful_set" "statefulset" {
             content {
               name  = env.key
               value = env.value
+            }
+          }
+        }
+
+        dynamic "volume" {
+          for_each = { for vol in var.volumes : vol.name => vol }
+
+          content {
+            name = volume.value.name
+
+            persistent_volume_claim {
+              claim_name = kubernetes_persistent_volume_claim.pvc[volume.value.name].metadata[0].name
             }
           }
         }

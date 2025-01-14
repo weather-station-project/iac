@@ -78,6 +78,25 @@ module "database" {
     }
   ]
 
+  /*volumes = [
+    {
+      name           = "timezone"
+      host_path      = "/etc/timezone"
+      container_path = "/etc/timezone"
+      read_only      = true
+      capacity       = "1Ki"
+      type           = "File"
+    },
+    {
+      name           = "localtime"
+      host_path      = "/etc/localtime"
+      container_path = "/etc/localtime"
+      read_only      = true
+      capacity       = "1Ki"
+      type           = "File"
+    }
+  ]
+*/
   environment_variables = {
     POSTGRES_INITDB_ARGS              = "--data-checksums"
     POSTGRES_PASSWORD                 = "this-user-will-be-disabled"
@@ -109,6 +128,7 @@ module "backend" {
     DATABASE_NAME       = "weather_station"
     DATABASE_USER       = "read_write"
     DATABASE_PASSWORD   = random_password.passwords[1].result
+    DATABASE_SCHEMA     = "weather_station"
     TZ                  = var.time_zone
   }
 }
