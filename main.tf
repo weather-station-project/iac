@@ -122,7 +122,7 @@ module "backend" {
     JWT_SECRET          = random_password.passwords[2].result
     JWT_EXPIRATION_TIME = "1h"
     LOG_LEVEL           = "info"
-    DATABASE_HOST       = module.database.name
+    DATABASE_HOST       = module.database.service_name
     DATABASE_NAME       = "weather_station"
     DATABASE_USER       = "read_write"
     DATABASE_PASSWORD   = random_password.passwords[1].result
