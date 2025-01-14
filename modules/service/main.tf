@@ -7,7 +7,7 @@ resource "kubernetes_service_account" "service_account" {
 
 resource "kubernetes_role_binding" "pod_executor_binding" {
   metadata {
-    name      = "pod-executor-binding"
+    name      = "${var.sa_role}-${kubernetes_service_account.service_account.metadata[0].name}-binding"
     namespace = var.namespace
   }
 
