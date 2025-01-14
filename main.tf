@@ -119,25 +119,6 @@ module "backend" {
   external_port  = 30080
   sa_role        = kubernetes_role.pod_executor.metadata[0].name
 
-  volumes = [
-    {
-      name           = "timezone"
-      host_path      = "/etc/timezone"
-      container_path = "/etc/timezone"
-      read_only      = true
-      capacity       = "1Ki"
-      type           = "File"
-    },
-    {
-      name           = "localtime"
-      host_path      = "/etc/localtime"
-      container_path = "/etc/localtime"
-      read_only      = true
-      capacity       = "1Ki"
-      type           = "File"
-    }
-  ]
-
   environment_variables = {
     NODE_ENV            = "production"
     JWT_SECRET          = random_password.passwords[2].result
@@ -147,5 +128,6 @@ module "backend" {
     DATABASE_NAME       = "weather_station"
     DATABASE_USER       = "read_write"
     DATABASE_PASSWORD   = random_password.passwords[1].result
+    TZ                  = "Europe/Madrid"
   }
 }
