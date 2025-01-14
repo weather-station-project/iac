@@ -25,7 +25,7 @@ resource "kubernetes_namespace" "namespace" {
 }
 
 resource "random_password" "passwords" {
-  count            = 2
+  count            = 3
   length           = 64
   override_special = "!@#$%&*()-_=+[]{}<>?"
 
@@ -88,14 +88,15 @@ module "database" {
   }
 }
 
-/*module "service" {
+module "backend" {
   source     = "./modules/service"
   depends_on = [module.database]
 
-  namespace    = var.namespace
-  name         = "backend"
-  docker_image = "weatherstationproject/backend:ALGUNA IMAGEN"
-  port         = 5432
+  namespace      = var.namespace
+  name           = "backend"
+  docker_image   = "weatherstationproject/backend:${var.backend_image_tag}"
+  container_port = 8080
+  external_port  = 30080
 
   volumes = [
     {
@@ -117,12 +118,13 @@ module "database" {
   ]
 
   environment_variables = {
-    POSTGRES_INITDB_ARGS              = "--data-checksums"
-    POSTGRES_PASSWORD                 = "this-user-will-be-disabled"
-    DATABASE_ADMIN_USER_PASSWORD      = var.database_admin_password
-    DATABASE_READ_ONLY_USER_PASSWORD  = random_password.passwords[0].result
-    DATABASE_READ_WRITE_USER_PASSWORD = random_password.passwords[1].result
-    TZ                                = "Europe/Madrid"
-    PGTZ                              = "Europe/Madrid"
+    NODE_ENV            = "production"
+    JWT_SECRET          = random_password.passwords[2].result
+    JWT_EXPIRATION_TIME = "1h"
+    LOG_LEVEL           = "info"
+    DATABASE_HOST       = module.database.name
+    DATABASE_NAME       = "weather_station"
+    DATABASE_USER       = "read_write"
+    DATABASE_PASSWORD   = random_password.passwords[1].result
   }
-}*/
+}

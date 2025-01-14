@@ -8,3 +8,8 @@ variable "database_admin_password" {
   type        = string
   sensitive   = true
 }
+
+variable "backend_image_tag" {
+  description = "Backend image tag"
+  type        = string
+}
