@@ -3,6 +3,11 @@ variable "namespace" {
   type        = string
 }
 
+variable "sa_role" {
+  description = "Service account role"
+  type        = string
+}
+
 variable "name" {
   description = "Name of the service"
   type        = string

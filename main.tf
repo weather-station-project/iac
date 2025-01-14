@@ -40,6 +40,25 @@ resource "random_password" "passwords" {
   min_upper   = 15
 }
 
+resource "kubernetes_role" "pod_executor" {
+  metadata {
+    name      = "pod-executor"
+    namespace = kubernetes_namespace.namespace.metadata[0].name
+  }
+
+  rule {
+    api_groups = [""]
+    resources  = ["pods"]
+    verbs      = ["create"]
+  }
+
+  rule {
+    api_groups = [""]
+    resources  = ["secrets"]
+    verbs      = ["get"]
+  }
+}
+
 module "database" {
   source = "./modules/service"
 
@@ -48,6 +67,7 @@ module "database" {
   docker_image   = "postgres:17-alpine"
   container_port = 5432
   external_port  = 30032
+  sa_role        = kubernetes_role.pod_executor.metadata[0].name
 
   volumes = [
     {

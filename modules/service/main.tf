@@ -1,22 +1,3 @@
-resource "kubernetes_role" "pod_executor" {
-  metadata {
-    name      = "pod-executor"
-    namespace = var.namespace
-  }
-
-  rule {
-    api_groups = [""]
-    resources  = ["pods"]
-    verbs      = ["create"]
-  }
-
-  rule {
-    api_groups = [""]
-    resources  = ["secrets"]
-    verbs      = ["get"]
-  }
-}
-
 resource "kubernetes_service_account" "service_account" {
   metadata {
     name      = "${var.name}-sa"
@@ -33,7 +14,7 @@ resource "kubernetes_role_binding" "pod_executor_binding" {
   role_ref {
     api_group = "rbac.authorization.k8s.io"
     kind      = "Role"
-    name      = kubernetes_role.pod_executor.metadata[0].name
+    name      = var.sa_role
   }
 
   subject {
