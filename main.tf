@@ -117,6 +117,7 @@ module "backend" {
   docker_image   = "weatherstationproject/backend:${var.backend_image_tag}"
   container_port = 8080
   external_port  = 30080
+  sa_role        = kubernetes_role.pod_executor.metadata[0].name
 
   volumes = [
     {
