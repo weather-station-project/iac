@@ -19,11 +19,15 @@ on:
       kubernetes-config-base64:
         description: Configuration file for Kubernetes in base64
         required: true
+      db-admin-password:
+        description: Database admin password
+        required: true
 jobs:
   deploy:
     runs-on: ubuntu-latest
     env:
       CONFIG_PATH: environments/${{ inputs.env-name }}
+      TF_VAR_database_admin_password: ${{ secrets.db-admin-password }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -40,9 +44,7 @@ jobs:
           fileDir: .kube/
           encodedString: ${{ secrets.kubernetes-config-base64 }}
       - name: Create environment variables
-        run: |
-          echo "KUBE_CONFIG_PATH=${{ steps.k8s-config.outputs.filePath }}" >> $GITHUB_ENV
-          echo "TF_VAR_database_admin_password=${{ secrets.DB_ADMIN_PASSWORD }}" >> $GITHUB_ENV
+        run: echo "KUBE_CONFIG_PATH=${{ steps.k8s-config.outputs.filePath }}" >> $GITHUB_ENV
       - name: Terraform init
         run: terraform init -input=false -backend-config="${{ env.CONFIG_PATH }}/kubernetes.tfbackend"
       - name: Terraform validate
