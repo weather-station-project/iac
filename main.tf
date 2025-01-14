@@ -69,25 +69,6 @@ module "database" {
   external_port  = 30032
   sa_role        = kubernetes_role.pod_executor.metadata[0].name
 
-  volumes = [
-    {
-      name           = "timezone"
-      host_path      = "/etc/timezone"
-      container_path = "/etc/timezone"
-      read_only      = true
-      capacity       = "1Ki"
-      type           = "File"
-    },
-    {
-      name           = "localtime"
-      host_path      = "/etc/localtime"
-      container_path = "/etc/localtime"
-      read_only      = true
-      capacity       = "1Ki"
-      type           = "File"
-    }
-  ]
-
   config_maps = [
     {
       name              = "database-init-script"
@@ -103,8 +84,8 @@ module "database" {
     DATABASE_ADMIN_USER_PASSWORD      = var.database_admin_password
     DATABASE_READ_ONLY_USER_PASSWORD  = random_password.passwords[0].result
     DATABASE_READ_WRITE_USER_PASSWORD = random_password.passwords[1].result
-    TZ                                = "Europe/Madrid"
-    PGTZ                              = "Europe/Madrid"
+    TZ                                = var.time_zone
+    PGTZ                              = var.time_zone
   }
 }
 
@@ -128,6 +109,6 @@ module "backend" {
     DATABASE_NAME       = "weather_station"
     DATABASE_USER       = "read_write"
     DATABASE_PASSWORD   = random_password.passwords[1].result
-    TZ                  = "Europe/Madrid"
+    TZ                  = var.time_zone
   }
 }

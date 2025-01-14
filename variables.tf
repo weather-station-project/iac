@@ -3,6 +3,11 @@ variable "namespace" {
   type        = string
 }
 
+variable "time_zone" {
+  description = "Time zone to set in the containers"
+  type        = string
+}
+
 variable "database_admin_password" {
   description = "Database admin password"
   type        = string

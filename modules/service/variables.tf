@@ -23,21 +23,6 @@ variable "external_port" {
   type        = number
 }
 
-variable "volumes" {
-  description = "List of volumes to mount"
-
-  type = list(object({
-    name           = string
-    host_path      = string
-    container_path = string
-    read_only      = bool
-    capacity       = string
-    type           = string # Allowed values are "" (default), DirectoryOrCreate, Directory, FileOrCreate, File, Socket, CharDevice and BlockDevice
-  }))
-
-  default = []
-}
-
 variable "config_maps" {
   description = "List of config maps to mount"
 
