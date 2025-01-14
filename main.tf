@@ -43,7 +43,7 @@ resource "random_password" "passwords" {
 module "database" {
   source = "./modules/service"
 
-  namespace      = var.namespace
+  namespace      = kubernetes_namespace.namespace.metadata[0].name
   name           = "database"
   docker_image   = "postgres:17-alpine"
   container_port = 5432
