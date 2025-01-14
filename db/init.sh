@@ -14,8 +14,8 @@ psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" <<-E
     \c weather_station
 
     -- Create schema and point to it to store the objects as the default public is not recommended
-    CREATE SCHEMA IF NOT EXISTS weather_station;
-    ALTER DATABASE weather_station SET search_path TO weather_station;
+    CREATE SCHEMA weather_station;
+    SET search_path TO weather_station;
 
     -- Table ambient_temperatures
     CREATE TABLE ambient_temperatures (
