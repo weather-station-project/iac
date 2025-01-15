@@ -80,7 +80,7 @@ module "database" {
 
   volumes = [
     {
-      name           = "data"
+      name           = "database-data"
       host_path      = var.database_path
       container_path = "/var/lib/postgresql/data"
       read_only      = false
