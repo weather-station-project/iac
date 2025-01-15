@@ -93,7 +93,7 @@ module "database" {
 
   volumes = [
     {
-      name               = "database-data"
+      name               = "data"
       storage_class_name = kubernetes_storage_class.weather_station_storage.metadata[0].name
       container_path     = "/var/lib/postgresql/data"
       read_only          = false
