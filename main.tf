@@ -78,25 +78,17 @@ module "database" {
     }
   ]
 
-  /*volumes = [
+  volumes = [
     {
-      name           = "timezone"
-      host_path      = "/etc/timezone"
-      container_path = "/etc/timezone"
-      read_only      = true
-      capacity       = "1Ki"
-      type           = "File"
-    },
-    {
-      name           = "localtime"
-      host_path      = "/etc/localtime"
-      container_path = "/etc/localtime"
-      read_only      = true
-      capacity       = "1Ki"
-      type           = "File"
+      name           = "data"
+      host_path      = var.database_path
+      container_path = "/var/lib/postgresql/data"
+      read_only      = false
+      capacity       = var.database_size_use
+      type           = "Directory"
     }
   ]
-*/
+
   environment_variables = {
     POSTGRES_INITDB_ARGS              = "--data-checksums"
     POSTGRES_PASSWORD                 = "this-user-will-be-disabled"
