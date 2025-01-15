@@ -47,29 +47,6 @@ resource "kubernetes_service" "service" {
   }
 }
 
-resource "kubernetes_persistent_volume" "pv" {
-  for_each = { for vol in var.volumes : vol.name => vol }
-
-  metadata {
-    name = "${var.name}-${each.value.name}"
-  }
-
-  spec {
-    capacity = {
-      storage = each.value.capacity
-    }
-
-    access_modes = [each.value.read_only ? "ReadOnlyMany" : "ReadWriteOnce"]
-
-    persistent_volume_source {
-      host_path {
-        path = each.value.host_path
-        type = each.value.type
-      }
-    }
-  }
-}
-
 resource "kubernetes_persistent_volume_claim" "pvc" {
   for_each = { for vol in var.volumes : vol.name => vol }
 
