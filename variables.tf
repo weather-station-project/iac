@@ -20,8 +20,8 @@ variable "database_path" {
 }
 
 variable "database_size_use" {
-    description = "Database size to use"
-    type        = string
+  description = "Database size to use"
+  type        = string
 }
 
 variable "backend_image_tag" {
