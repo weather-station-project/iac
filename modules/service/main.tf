@@ -70,21 +70,6 @@ resource "kubernetes_persistent_volume" "pv" {
   }
 }
 
-resource "kubernetes_storage_class" "example" {
-  for_each = { for vol in var.volumes : vol.name => vol }
-
-  metadata {
-    name = "${each.value.name}-class"
-  }
-  storage_provisioner = "microk8s.io/hostpath"
-  reclaim_policy      = "Delete"
-  volume_binding_mode = "WaitForFirstConsumer"
-
-  parameters = {
-    pvDir = each.value.host_path
-  }
-}
-
 resource "kubernetes_persistent_volume_claim" "pvc" {
   for_each = { for vol in var.volumes : vol.name => vol }
 
@@ -94,8 +79,8 @@ resource "kubernetes_persistent_volume_claim" "pvc" {
   }
 
   spec {
-    access_modes = [each.value.read_only ? "ReadOnlyMany" : "ReadWriteOnce"]
-    storage_class_name = "${each.value.name}-class"
+    access_modes       = [each.value.read_only ? "ReadOnlyMany" : "ReadWriteOnce"]
+    storage_class_name = each.value.storage_class_name
 
     resources {
       requests = {

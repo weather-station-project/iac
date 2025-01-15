@@ -14,13 +14,8 @@ variable "database_admin_password" {
   sensitive   = true
 }
 
-variable "database_path" {
-  description = "Path to the database"
-  type        = string
-}
-
-variable "database_size_use" {
-  description = "Database size to use"
+variable "database_size_limit" {
+  description = "Database size to use as maximum"
   type        = string
 }
 

@@ -59,6 +59,19 @@ resource "kubernetes_role" "pod_executor" {
   }
 }
 
+resource "kubernetes_storage_class" "weather_station_storage" {
+  metadata {
+    name = "weather-station-storage"
+  }
+  storage_provisioner = "microk8s.io/hostpath"
+  reclaim_policy      = "Delete"
+  volume_binding_mode = "WaitForFirstConsumer"
+
+  parameters = {
+    pvDir = "/mnt/kubernetes/weather-station"
+  }
+}
+
 module "database" {
   source = "./modules/service"
 
@@ -80,12 +93,12 @@ module "database" {
 
   volumes = [
     {
-      name           = "database-data"
-      host_path      = var.database_path
-      container_path = "/var/lib/postgresql/data"
-      read_only      = false
-      capacity       = var.database_size_use
-      type           = "Directory"
+      name               = "database-data"
+      storage_class_name = kubernetes_storage_class.weather_station_storage.metadata[0].name
+      container_path     = "/var/lib/postgresql/data"
+      read_only          = false
+      capacity           = var.database_size_limit
+      type               = "Directory"
     }
   ]
 
