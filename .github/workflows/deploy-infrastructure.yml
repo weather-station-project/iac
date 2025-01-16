@@ -55,13 +55,13 @@ jobs:
       - name: Terraform validate
         run: terraform validate
       - name: Terraform plan
-        if: ! github.event.inputs.destroy-environment
+        if: ${{ ! github.event.inputs.destroy-environment }}
         run: terraform plan -compact-warnings -var-file="${{ env.CONFIG_PATH }}/values.tfvars"
       - name: Terraform apply
-        if: ! github.event.inputs.destroy-environment
+        if: ${{ ! github.event.inputs.destroy-environment }}
         run: terraform apply -compact-warnings -auto-approve -var-file="${{ env.CONFIG_PATH }}/values.tfvars"
       - name: Terraform infrastructure
-        if: github.event.inputs.destroy-environment
+        if: ${{ github.event.inputs.destroy-environment }}
         run: |
           terraform plan -destroy -compact-warnings -var-file="${{ env.CONFIG_PATH }}/values.tfvars"
           terraform apply -destroy -compact-warnings -auto-approve -var-file="${{ env.CONFIG_PATH }}/values.tfvars"
