@@ -16,7 +16,7 @@ jobs:
     with:
       terraform-version: ~1.10.0
       env-name: ${{ inputs.env-name }}
-      destroy-environment: 'true'
+      destroy-environment: true
     secrets:
       kubernetes-config-base64: ${{ secrets.KUBERNETES_CONFIG_BASE64 }}
       db-admin-password: ${{ secrets.DB_ADMIN_PASSWORD }}
