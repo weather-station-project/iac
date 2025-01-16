@@ -10,6 +10,11 @@ on:
         description: Environment name (staging or production)
         type: string
         required: true
+      destroy-environment:
+        description: Destroy the environment
+        type: boolean
+        required: false
+        default: false
 #      pmp-rx-backend-image-tag:
 #        description: Container image tag for pmp-rx-backend (only Reside)
 #        type: string
@@ -50,6 +55,13 @@ jobs:
       - name: Terraform validate
         run: terraform validate
       - name: Terraform plan
+        if: ! github.event.inputs.destroy-environment
         run: terraform plan -compact-warnings -var-file="${{ env.CONFIG_PATH }}/values.tfvars"
       - name: Terraform apply
+        if: ! github.event.inputs.destroy-environment
         run: terraform apply -compact-warnings -auto-approve -var-file="${{ env.CONFIG_PATH }}/values.tfvars"
+      - name: Terraform infrastructure
+        if: github.event.inputs.destroy-environment
+        run: |
+          terraform plan -destroy -compact-warnings -var-file="${{ env.CONFIG_PATH }}/values.tfvars"
+          terraform apply -destroy -compact-warnings -auto-approve -var-file="${{ env.CONFIG_PATH }}/values.tfvars"
