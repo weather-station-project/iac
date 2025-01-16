@@ -26,7 +26,7 @@ resource "kubernetes_namespace" "namespace" {
 
 resource "random_password" "passwords" {
   count            = 3
-  length           = 128
+  length           = 64
   override_special = "!@#$%&*()-_=+[]{}<>?"
 
   lower   = true
@@ -34,10 +34,10 @@ resource "random_password" "passwords" {
   numeric = true
   upper   = true
 
-  min_lower   = 30
-  min_special = 30
-  min_numeric = 30
-  min_upper   = 30
+  min_lower   = 15
+  min_special = 15
+  min_numeric = 15
+  min_upper   = 15
 }
 
 resource "kubernetes_role" "pod_executor" {

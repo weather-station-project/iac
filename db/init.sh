@@ -109,8 +109,8 @@ psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" <<-E
     CREATE EXTENSION IF NOT EXISTS pgcrypto;
 
     -- Insert users
-    INSERT INTO users (login, password, role) VALUES ('sensors', crypt('$DATABASE_READ_WRITE_USER_PASSWORD', gen_salt('bf', 10)), 'write');
-    INSERT INTO users (login, password, role) VALUES ('dashboard', crypt('$DATABASE_READ_ONLY_USER_PASSWORD', gen_salt('bf', 10)), 'read');
+    INSERT INTO users (login, password, role) VALUES ('sensors', crypt('$DATABASE_READ_WRITE_USER_PASSWORD', gen_salt('bf', 12)), 'write');
+    INSERT INTO users (login, password, role) VALUES ('dashboard', crypt('$DATABASE_READ_ONLY_USER_PASSWORD', gen_salt('bf', 12)), 'read');
 EOSQL
 
 cat > /var/lib/postgresql/data/pg_hba.conf <<- EOF

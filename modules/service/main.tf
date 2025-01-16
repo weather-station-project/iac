@@ -149,9 +149,9 @@ resource "kubernetes_stateful_set" "statefulset" {
         restart_policy       = "Always"
 
         security_context {
-          run_as_user  = 1000
-          run_as_group = 1003
-          fs_group     = 1003
+          run_as_user     = 1000
+          run_as_group    = 1003
+          fs_group        = 1003
           run_as_non_root = true
         }
 
