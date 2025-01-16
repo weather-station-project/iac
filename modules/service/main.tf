@@ -47,6 +47,43 @@ resource "kubernetes_service" "service" {
   }
 }
 
+resource "kubernetes_persistent_volume" "pv" {
+  for_each = { for vol in var.volumes : vol.name => vol }
+
+  metadata {
+    name = "${var.name}-${each.value.name}"
+  }
+
+  spec {
+    storage_class_name               = each.value.storage_class_name
+    persistent_volume_reclaim_policy = "Retain"
+    access_modes                     = [each.value.read_only ? "ReadOnlyOnce" : "ReadWriteOnce"]
+    volume_mode                      = "Filesystem"
+
+    capacity = {
+      storage = each.value.capacity
+    }
+
+    node_affinity {
+      required {
+        node_selector_term {
+          match_expressions {
+            key      = "kubernetes.io/hostname"
+            operator = "In"
+            values   = ["raspberrypi"]
+          }
+        }
+      }
+    }
+
+    persistent_volume_source {
+      local {
+        path = each.value.host_path
+      }
+    }
+  }
+}
+
 resource "kubernetes_persistent_volume_claim" "pvc" {
   for_each = { for vol in var.volumes : vol.name => vol }
 
@@ -56,8 +93,10 @@ resource "kubernetes_persistent_volume_claim" "pvc" {
   }
 
   spec {
-    access_modes       = [each.value.read_only ? "ReadOnlyMany" : "ReadWriteOnce"]
+    access_modes       = [each.value.read_only ? "ReadOnlyOnce" : "ReadWriteOnce"]
     storage_class_name = each.value.storage_class_name
+    volume_mode = "Filesystem"
+    volume_name = kubernetes_persistent_volume.pv["${var.name}-${each.value.name}"].metadata[0].name
 
     resources {
       requests = {
@@ -123,8 +162,8 @@ resource "kubernetes_stateful_set" "statefulset" {
             for_each = { for vol in var.volumes : vol.name => vol }
 
             content {
-              mount_path = volume_mount.value.container_path
               name       = volume_mount.value.name
+              mount_path = volume_mount.value.container_path
             }
           }
 
@@ -155,7 +194,7 @@ resource "kubernetes_stateful_set" "statefulset" {
             name = volume.value.name
 
             persistent_volume_claim {
-              claim_name = kubernetes_persistent_volume_claim.pvc[volume.value.name].metadata[0].name
+              claim_name = kubernetes_persistent_volume_claim.pvc["${var.name}-${volume.value.name}"].metadata[0].name
             }
           }
         }

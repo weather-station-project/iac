@@ -19,6 +19,11 @@ variable "database_size_limit" {
   type        = string
 }
 
+variable "environment_root_folder" {
+  description = "Root folder for environment files"
+  type        = string
+}
+
 variable "backend_image_tag" {
   description = "Backend image tag"
   type        = string

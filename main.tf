@@ -26,7 +26,7 @@ resource "kubernetes_namespace" "namespace" {
 
 resource "random_password" "passwords" {
   count            = 3
-  length           = 64
+  length           = 128
   override_special = "!@#$%&*()-_=+[]{}<>?"
 
   lower   = true
@@ -34,10 +34,10 @@ resource "random_password" "passwords" {
   numeric = true
   upper   = true
 
-  min_lower   = 15
-  min_special = 15
-  min_numeric = 15
-  min_upper   = 15
+  min_lower   = 30
+  min_special = 30
+  min_numeric = 30
+  min_upper   = 30
 }
 
 resource "kubernetes_role" "pod_executor" {
@@ -63,12 +63,13 @@ resource "kubernetes_storage_class" "weather_station_storage" {
   metadata {
     name = "weather-station-storage"
   }
+
   storage_provisioner = "microk8s.io/hostpath"
-  reclaim_policy      = "Delete"
+  reclaim_policy      = "Retain"
   volume_binding_mode = "WaitForFirstConsumer"
 
   parameters = {
-    pvDir = "/mnt/kubernetes/weather-station"
+    pvDir = var.environment_root_folder
   }
 }
 
@@ -95,10 +96,10 @@ module "database" {
     {
       name               = "data"
       storage_class_name = kubernetes_storage_class.weather_station_storage.metadata[0].name
+      host_path          = "${var.environment_root_folder}/database"
       container_path     = "/var/lib/postgresql/data"
       read_only          = false
       capacity           = var.database_size_limit
-      type               = "Directory"
     }
   ]
 

@@ -4,7 +4,7 @@ variable "namespace" {
 }
 
 variable "sa_role" {
-  description = "Service account role"
+  description = "Service account role to execute the service"
   type        = string
 }
 
@@ -29,6 +29,7 @@ variable "volumes" {
   type = list(object({
     name               = string
     storage_class_name = string
+    host_path          = string
     container_path     = string
     read_only          = bool
     capacity           = string
