@@ -31,4 +31,4 @@ jobs:
       env-name: staging
     secrets:
       kubernetes-config-base64: ${{ secrets.KUBERNETES_CONFIG_BASE64 }}
-      vars-list: "TF_VAR_database_admin_password=123456"
+      vars-list: "TF_VAR_database_admin_password=${{ secrets.db-admin-password }}"
