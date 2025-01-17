@@ -25,7 +25,7 @@ jobs:
       - run: terraform validate
   deploy:
     needs: validate-tf
-    uses: github.com/davidleonm/cicd-pipelines/.github/workflows/deploy-infrastructure.yml@main
+    uses: davidleonm/cicd-pipelines/.github/workflows/deploy-infrastructure.yml@main
     with:
       terraform-version: ~1.10.0
       env-name: staging
