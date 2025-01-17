@@ -18,6 +18,10 @@ terraform {
   backend "kubernetes" {}
 }
 
+locals {
+  hostname = "raspberrypi"
+}
+
 resource "kubernetes_namespace" "namespace" {
   metadata {
     name = var.namespace
@@ -82,6 +86,7 @@ module "database" {
   container_port = 5432
   external_port  = 30032
   sa_role        = kubernetes_role.pod_executor.metadata[0].name
+  hostname       = local.hostname
 
   config_maps = [
     {
@@ -124,6 +129,7 @@ module "backend" {
   container_port = 8080
   external_port  = 30080
   sa_role        = kubernetes_role.pod_executor.metadata[0].name
+  hostname       = local.hostname
 
   environment_variables = {
     NODE_ENV            = "production"
