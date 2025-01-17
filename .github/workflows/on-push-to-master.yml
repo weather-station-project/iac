@@ -32,3 +32,4 @@ jobs:
     secrets:
       kubernetes-config-base64: ${{ secrets.KUBERNETES_CONFIG_BASE64 }}
       db-admin-password: ${{ secrets.DB_ADMIN_PASSWORD }}
+      vars-list: "TF_VAR_database_admin_password=${{ secrets.db-admin-password }}"
