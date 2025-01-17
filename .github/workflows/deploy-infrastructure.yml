@@ -15,11 +15,6 @@ on:
         type: boolean
         required: false
         default: false
-#      pmp-rx-backend-image-tag:
-#        description: Container image tag for pmp-rx-backend (only Reside)
-#        type: string
-#        required: false
-#        default: latest
     secrets:
       kubernetes-config-base64:
         description: Configuration file for Kubernetes in base64
