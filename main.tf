@@ -74,7 +74,7 @@ resource "kubernetes_storage_class" "weather_station_storage" {
 }
 
 module "database" {
-  source = "github.com/davidleonm/cicd-pipelines/terraform/modules/service"
+  source = "github.com/davidleonm/cicd-pipelines/terraform/modules/service?ref=master"
 
   namespace      = kubernetes_namespace.namespace.metadata[0].name
   name           = "database"
@@ -115,7 +115,7 @@ module "database" {
 }
 
 module "backend" {
-  source     = "github.com/davidleonm/cicd-pipelines/terraform/modules/service"
+  source     = "github.com/davidleonm/cicd-pipelines/terraform/modules/service?ref=master"
   depends_on = [module.database]
 
   namespace      = var.namespace
