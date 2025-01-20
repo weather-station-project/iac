@@ -19,18 +19,20 @@ psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" <<-E
     GRANT USAGE ON SCHEMA weather_station TO read_only;
     SET search_path TO weather_station;
 
-    -- Table ambient_temperatures
-    CREATE TABLE ambient_temperatures (
+    -- Table air_measurements
+      CREATE TABLE air_measurements (
         id BIGINT GENERATED ALWAYS AS IDENTITY,
         temperature SMALLINT NOT NULL,
+        pressure SMALLINT NOT NULL,
+        humidity SMALLINT NOT NULL,
         date_time TIMESTAMPTZ(0) NOT NULL,
 
-        CONSTRAINT ambient_temperatures_pkey PRIMARY KEY (id)
-    );
+        CONSTRAINT air_measurements_pkey PRIMARY KEY (id)
+      );
 
-    GRANT SELECT, INSERT ON ambient_temperatures TO read_write;
-    GRANT SELECT ON ambient_temperatures TO read_only;
-    GRANT USAGE, SELECT ON SEQUENCE ambient_temperatures_id_seq TO read_write;
+      GRANT SELECT, INSERT ON air_measurements TO read_write;
+      GRANT SELECT ON air_measurements TO read_only;
+      GRANT USAGE, SELECT ON SEQUENCE air_measurements_id_seq TO read_write;
 
     -- Table ground_temperatures
     CREATE TABLE ground_temperatures (
@@ -44,20 +46,6 @@ psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" <<-E
     GRANT SELECT, INSERT ON ground_temperatures TO read_write;
     GRANT SELECT ON ground_temperatures TO read_only;
     GRANT USAGE, SELECT ON SEQUENCE ground_temperatures_id_seq TO read_write;
-
-    -- Table air_measurements
-    CREATE TABLE air_measurements (
-        id BIGINT GENERATED ALWAYS AS IDENTITY,
-        pressure SMALLINT NOT NULL,
-        humidity SMALLINT NOT NULL,
-        date_time TIMESTAMPTZ(0) NOT NULL,
-
-        CONSTRAINT air_measurements_pkey PRIMARY KEY (id)
-    );
-
-    GRANT SELECT, INSERT ON air_measurements TO read_write;
-    GRANT SELECT ON air_measurements TO read_only;
-    GRANT USAGE, SELECT ON SEQUENCE air_measurements_id_seq TO read_write;
 
     -- Table wind_measurements
     CREATE TABLE wind_measurements (
@@ -99,9 +87,8 @@ psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" <<-E
     GRANT SELECT ON users TO read_only;
 
     -- Indexes
-    CREATE INDEX ambient_temperatures_date_time_idx ON ambient_temperatures(date_time);
-    CREATE INDEX ground_temperatures_date_time_idx ON ground_temperatures(date_time);
     CREATE INDEX air_measurements_date_time_idx ON air_measurements(date_time);
+    CREATE INDEX ground_temperatures_date_time_idx ON ground_temperatures(date_time);
     CREATE INDEX wind_measurements_date_time_idx ON wind_measurements(date_time);
     CREATE INDEX rainfall_date_time_idx ON rainfall(date_time);
 
