@@ -19,3 +19,4 @@ jobs:
       destroy-environment: true
     secrets:
       kubernetes-config-base64: ${{ secrets.KUBERNETES_CONFIG_BASE64 }}
+      vars-list: ""
