@@ -12,7 +12,7 @@ on:
         required: true
 jobs:
   destroy-infrastructure:
-    uses: ./.github/workflows/deploy-infrastructure.yml
+    uses: davidleonm/cicd-pipelines/.github/workflows/deploy-infrastructure.yml@master
     with:
       terraform-version: ~1.10.0
       env-name: ${{ inputs.env-name }}
