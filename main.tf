@@ -18,10 +18,6 @@ terraform {
   backend "kubernetes" {}
 }
 
-locals {
-  hostname = "raspberrypi"
-}
-
 resource "kubernetes_namespace" "namespace" {
   metadata {
     name = var.namespace
@@ -29,7 +25,7 @@ resource "kubernetes_namespace" "namespace" {
 }
 
 resource "random_password" "passwords" {
-  count            = 3
+  count            = 4
   length           = 64
   override_special = "!@#$%&*()-_=+[]{}<>?"
 
@@ -42,6 +38,14 @@ resource "random_password" "passwords" {
   min_special = 15
   min_numeric = 15
   min_upper   = 15
+}
+
+locals {
+  hostname                          = "raspberrypi"
+  database_read_only_user_password  = random_password.passwords[0].result
+  database_read_write_user_password = random_password.passwords[1].result
+  jwt_secret                        = random_password.passwords[2].result
+  socket_server_admin_password      = random_password.passwords[3].result
 }
 
 resource "kubernetes_role" "pod_executor" {
@@ -119,8 +123,8 @@ module "database" {
     POSTGRES_INITDB_ARGS              = "--data-checksums"
     POSTGRES_PASSWORD                 = "this-user-will-be-disabled"
     DATABASE_ADMIN_USER_PASSWORD      = var.database_admin_password
-    DATABASE_READ_ONLY_USER_PASSWORD  = random_password.passwords[0].result
-    DATABASE_READ_WRITE_USER_PASSWORD = random_password.passwords[1].result
+    DATABASE_READ_ONLY_USER_PASSWORD  = local.database_read_only_user_password
+    DATABASE_READ_WRITE_USER_PASSWORD = local.database_read_write_user_password
     TZ                                = var.time_zone
     PGTZ                              = var.time_zone
   }
@@ -130,7 +134,7 @@ module "backend" {
   source     = "github.com/davidleonm/cicd-pipelines/terraform/modules/service"
   depends_on = [module.database]
 
-  namespace      = var.namespace
+  namespace      = kubernetes_namespace.namespace.metadata[0].name
   name           = "backend"
   docker_image   = "weatherstationproject/backend:${var.backend_image_tag}"
   container_port = 8080
@@ -140,14 +144,43 @@ module "backend" {
 
   environment_variables = {
     NODE_ENV            = "production"
-    JWT_SECRET          = random_password.passwords[2].result
+    JWT_SECRET          = local.jwt_secret
     JWT_EXPIRATION_TIME = "1h"
     LOG_LEVEL           = "info"
     DATABASE_HOST       = module.database.service_name
     DATABASE_NAME       = "weather_station"
     DATABASE_USER       = "read_write"
-    DATABASE_PASSWORD   = random_password.passwords[1].result
+    DATABASE_PASSWORD   = local.database_read_write_user_password
     DATABASE_SCHEMA     = "weather_station"
+    TZ                  = var.time_zone
+  }
+
+  security_context = {
+    run_as_user     = 1000
+    run_as_group    = 1003
+    fs_group        = 1003
+    run_as_non_root = true
+  }
+}
+
+module "socket_server" {
+  source = "github.com/davidleonm/cicd-pipelines/terraform/modules/service"
+
+  namespace      = kubernetes_namespace.namespace.metadata[0].name
+  name           = "socket-server"
+  docker_image   = "weatherstationproject/socket-server:${var.socket_server_image_tag}"
+  container_port = 8080
+  external_port  = 30081
+  sa_role        = kubernetes_role.pod_executor.metadata[0].name
+  hostname       = local.hostname
+
+  environment_variables = {
+    PORT                = "8080"
+    NODE_ENV            = "production"
+    JWT_SECRET          = local.jwt_secret
+    JWT_EXPIRATION_TIME = "1h"
+    LOG_LEVEL           = "info"
+    ADMIN_PASSWORD      = local.socket_server_admin_password
     TZ                  = var.time_zone
   }
 

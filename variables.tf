@@ -28,3 +28,8 @@ variable "backend_image_tag" {
   description = "Backend image tag"
   type        = string
 }
+
+variable "socket_server_image_tag" {
+  description = "Backend image tag"
+  type        = string
+}

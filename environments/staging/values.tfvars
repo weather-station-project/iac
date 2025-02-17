@@ -1,5 +1,6 @@
 namespace               = "weather-station-staging"
 backend_image_tag       = "edge"
+socket_server_image_tag = "edge"
 time_zone               = "Europe/Madrid"
 database_size_limit     = "8Gi"
 environment_root_folder = "/mnt/kubernetes/weather-station/staging"
