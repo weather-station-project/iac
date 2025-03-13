@@ -205,8 +205,8 @@ module "web_ui" {
 
   environment_variables = {
     NODE_ENV    = "production"
-    BACKEND_URL = "http://backend"       # todo change to backend service name
-    SOCKET_URL  = "http://socket-server" # todo change to socket server service name
+    BACKEND_URL = "http://${module.backend.service_name}"
+    SOCKET_URL  = "http://${module.backend.service_name}"
     LOGIN       = "dashboard"
     PASSWORD    = local.database_read_only_user_password
     TZ          = var.time_zone
