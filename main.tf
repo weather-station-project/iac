@@ -205,8 +205,8 @@ module "web_ui" {
 
   environment_variables = {
     NODE_ENV    = "production"
-    BACKEND_URL = "http://${module.backend.service_name}"
-    SOCKET_URL  = "http://${module.backend.service_name}"
+    BACKEND_URL = "http://${module.backend.service_name}:8080"
+    SOCKET_URL  = "http://${module.socket_server.service_name}:8080"
     LOGIN       = "dashboard"
     PASSWORD    = local.database_read_only_user_password
     TZ          = var.time_zone
