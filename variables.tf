@@ -30,6 +30,11 @@ variable "backend_image_tag" {
 }
 
 variable "socket_server_image_tag" {
-  description = "Backend image tag"
+  description = "Socket server image tag"
+  type        = string
+}
+
+variable "web_ui_image_tag" {
+  description = "Web UI image tag"
   type        = string
 }

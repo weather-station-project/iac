@@ -191,3 +191,31 @@ module "socket_server" {
     run_as_non_root = true
   }
 }
+
+module "web_ui" {
+  source = "github.com/davidleonm/cicd-pipelines/terraform/modules/service"
+
+  namespace      = kubernetes_namespace.namespace.metadata[0].name
+  name           = "web-ui"
+  docker_image   = "weatherstationproject/web-ui:${var.web_ui_image_tag}"
+  container_port = 5173
+  external_port  = 30082
+  sa_role        = kubernetes_role.pod_executor.metadata[0].name
+  hostname       = local.hostname
+
+  environment_variables = {
+    NODE_ENV    = "production"
+    BACKEND_URL = "http://backend"       # todo change to backend service name
+    SOCKET_URL  = "http://socket-server" # todo change to socket server service name
+    LOGIN       = "dashboard"
+    PASSWORD    = local.database_read_only_user_password
+    TZ          = var.time_zone
+  }
+
+  security_context = {
+    run_as_user     = 1000
+    run_as_group    = 1003
+    fs_group        = 1003
+    run_as_non_root = true
+  }
+}
