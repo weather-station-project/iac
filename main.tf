@@ -204,11 +204,12 @@ module "web_ui" {
   hostname       = local.hostname
 
   environment_variables = {
-    NODE_ENV    = "production"
-    BACKEND_URL = "http://${module.backend.fully_qualified_name}:${module.backend.container_port}"
-    SOCKET_URL  = "http://${module.socket_server.fully_qualified_name}:${module.backend.container_port}"
-    LOGIN       = "dashboard"
-    PASSWORD    = local.database_read_only_user_password
-    TZ          = var.time_zone
+    NODE_ENV     = "production"
+    DNS_RESOLVER = "kube-dns.kube-system.svc.cluster.local"
+    BACKEND_URL  = "http://${module.backend.fully_qualified_name}:${module.backend.container_port}"
+    SOCKET_URL   = "http://${module.socket_server.fully_qualified_name}:${module.backend.container_port}"
+    LOGIN        = "dashboard"
+    PASSWORD     = local.database_read_only_user_password
+    TZ           = var.time_zone
   }
 }
