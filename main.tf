@@ -147,7 +147,7 @@ module "backend" {
     JWT_SECRET          = local.jwt_secret
     JWT_EXPIRATION_TIME = "1h"
     LOG_LEVEL           = "info"
-    DATABASE_HOST       = module.database.service_name
+    DATABASE_HOST       = module.database.fully_qualified_name
     DATABASE_NAME       = "weather_station"
     DATABASE_USER       = "read_write"
     DATABASE_PASSWORD   = local.database_read_write_user_password
@@ -205,8 +205,8 @@ module "web_ui" {
 
   environment_variables = {
     NODE_ENV    = "production"
-    BACKEND_URL = "http://${module.backend.service_name}.${kubernetes_namespace.namespace.metadata[0].name}.svc.cluster.local"
-    SOCKET_URL  = "http://${module.socket_server.service_name}.${kubernetes_namespace.namespace.metadata[0].name}.svc.cluster.local"
+    BACKEND_URL = "http://${module.backend.fully_qualified_name}:${module.backend.container_port}"
+    SOCKET_URL  = "http://${module.socket_server.fully_qualified_name}:${module.backend.container_port}"
     LOGIN       = "dashboard"
     PASSWORD    = local.database_read_only_user_password
     TZ          = var.time_zone
