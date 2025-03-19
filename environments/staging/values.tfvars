@@ -1,5 +1,5 @@
 namespace               = "weather-station-staging"
-backend_image_tag       = "edge"
+backend_image_tag       = "development"
 socket_server_image_tag = "edge"
 web_ui_image_tag        = "edge"
 time_zone               = "Europe/Madrid"

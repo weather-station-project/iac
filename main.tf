@@ -13,6 +13,11 @@ terraform {
       source  = "hashicorp/random"
       version = "3.6.3"
     }
+
+    tls = {
+      source  = "hashicorp/tls"
+      version = "4.0.6"
+    }
   }
 
   backend "kubernetes" {}
@@ -46,6 +51,7 @@ locals {
   database_read_write_user_password = random_password.passwords[1].result
   jwt_secret                        = random_password.passwords[2].result
   socket_server_admin_password      = random_password.passwords[3].result
+  certificates_folder               = "/etc/ssl/certs"
 }
 
 resource "kubernetes_role" "pod_executor" {
@@ -79,6 +85,40 @@ resource "kubernetes_storage_class" "weather_station_storage" {
   parameters = {
     pvDir = var.environment_root_folder
   }
+}
+
+resource "tls_private_key" "key" {
+  algorithm = "ED25519"
+}
+
+resource "tls_self_signed_cert" "certificate" {
+  key_algorithm   = "ED25519"
+  private_key_pem = tls_private_key.key.private_key_pem
+  allowed_uses    = ["server_auth"]
+
+  subject {
+    common_name  = "wsp.com"
+    organization = "Weather Station Project"
+    country      = "Spain"
+    province     = "Madrid"
+    locality     = "Madrid"
+  }
+
+  validity_period_hours = 175200 # 20 years
+}
+
+resource "kubernetes_secret" "certificate_secret" {
+  metadata {
+    name      = "certificate-secret"
+    namespace = kubernetes_namespace.namespace.metadata[0].name
+  }
+
+  data = {
+    tls.crt = tls_self_signed_cert.certificate.cert_pem
+    tls.key = tls_private_key.key.private_key_pem
+  }
+
+  type = "kubernetes.io/tls"
 }
 
 module "database" {
@@ -137,22 +177,27 @@ module "backend" {
   namespace      = kubernetes_namespace.namespace.metadata[0].name
   name           = "backend"
   docker_image   = "weatherstationproject/backend:${var.backend_image_tag}"
-  container_port = 8080
+  container_port = 8443
   external_port  = 30080
   sa_role        = kubernetes_role.pod_executor.metadata[0].name
   hostname       = local.hostname
 
   environment_variables = {
+    PORT                = "8443"
     NODE_ENV            = "production"
     JWT_SECRET          = local.jwt_secret
     JWT_EXPIRATION_TIME = "1h"
     LOG_LEVEL           = "info"
-    DATABASE_HOST       = module.database.fully_qualified_name
-    DATABASE_NAME       = "weather_station"
-    DATABASE_USER       = "read_write"
-    DATABASE_PASSWORD   = local.database_read_write_user_password
-    DATABASE_SCHEMA     = "weather_station"
     TZ                  = var.time_zone
+
+    DATABASE_HOST     = module.database.fully_qualified_name
+    DATABASE_NAME     = "weather_station"
+    DATABASE_USER     = "read_write"
+    DATABASE_PASSWORD = local.database_read_write_user_password
+    DATABASE_SCHEMA   = "weather_station"
+
+    KEY_FILE  = "${local.certificates_folder}/tls.key"
+    CERT_FILE = "${local.certificates_folder}/tls.crt"
   }
 
   security_context = {
@@ -161,6 +206,15 @@ module "backend" {
     fs_group        = 1003
     run_as_non_root = true
   }
+
+  secret_volumes = [
+    {
+      name           = "certificates"
+      secret_name    = kubernetes_secret.certificate_secret.metadata[0].name
+      container_path = local.certificates_folder
+      read_only      = true
+    }
+  ]
 }
 
 module "socket_server" {
@@ -206,7 +260,7 @@ module "web_ui" {
   environment_variables = {
     NODE_ENV     = "production"
     DNS_RESOLVER = "kube-dns.kube-system.svc.cluster.local"
-    BACKEND_URL  = "http://${module.backend.fully_qualified_name}:${module.backend.container_port}"
+    BACKEND_URL  = "https://${module.backend.fully_qualified_name}:${module.backend.container_port}"
     SOCKET_URL   = "http://${module.socket_server.fully_qualified_name}:${module.backend.container_port}"
     LOGIN        = "dashboard"
     PASSWORD     = local.database_read_only_user_password
