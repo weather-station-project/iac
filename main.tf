@@ -92,7 +92,6 @@ resource "tls_private_key" "key" {
 }
 
 resource "tls_self_signed_cert" "certificate" {
-  key_algorithm   = "ED25519"
   private_key_pem = tls_private_key.key.private_key_pem
   allowed_uses    = ["server_auth"]
 
