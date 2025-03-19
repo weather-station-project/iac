@@ -113,8 +113,8 @@ resource "kubernetes_secret" "certificate_secret" {
   }
 
   data = {
-    tls.crt = tls_self_signed_cert.certificate.cert_pem
-    tls.key = tls_private_key.key.private_key_pem
+    "tls.crt" = tls_self_signed_cert.certificate.cert_pem
+    "tls.key" = tls_private_key.key.private_key_pem
   }
 
   type = "kubernetes.io/tls"
