@@ -88,7 +88,8 @@ resource "kubernetes_storage_class" "weather_station_storage" {
 }
 
 resource "tls_private_key" "key" {
-  algorithm = "ED25519"
+  algorithm = "RSA"
+  rsa_bits  = 4096
 }
 
 resource "tls_self_signed_cert" "certificate" {
