@@ -181,6 +181,7 @@ module "backend" {
   external_port  = 30080
   sa_role        = kubernetes_role.pod_executor.metadata[0].name
   hostname       = local.hostname
+  enable_probes  = true
 
   environment_variables = {
     PORT                = "8443"
@@ -225,6 +226,7 @@ module "socket_server" {
   external_port  = 30081
   sa_role        = kubernetes_role.pod_executor.metadata[0].name
   hostname       = local.hostname
+  enable_probes  = true
 
   environment_variables = {
     PORT                = "8443"
