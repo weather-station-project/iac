@@ -124,13 +124,14 @@ resource "kubernetes_secret" "certificate_secret" {
 module "database" {
   source = "github.com/davidleonm/cicd-pipelines/terraform/modules/service"
 
-  namespace      = kubernetes_namespace.namespace.metadata[0].name
-  name           = "database"
-  docker_image   = "postgres:17-alpine"
-  container_port = 5432
-  external_port  = 30032
-  sa_role        = kubernetes_role.pod_executor.metadata[0].name
-  hostname       = local.hostname
+  namespace         = kubernetes_namespace.namespace.metadata[0].name
+  name              = "database"
+  docker_image      = "postgres:17-alpine"
+  container_port    = 5432
+  external_port     = 30032
+  sa_role           = kubernetes_role.pod_executor.metadata[0].name
+  hostname          = local.hostname
+  enable_tcp_probes = true
 
   config_maps = [
     {
@@ -174,14 +175,14 @@ module "backend" {
   source     = "github.com/davidleonm/cicd-pipelines/terraform/modules/service"
   depends_on = [module.database]
 
-  namespace      = kubernetes_namespace.namespace.metadata[0].name
-  name           = "backend"
-  docker_image   = "weatherstationproject/backend:${var.backend_image_tag}"
-  container_port = 8443
-  external_port  = 30080
-  sa_role        = kubernetes_role.pod_executor.metadata[0].name
-  hostname       = local.hostname
-  enable_probes  = true
+  namespace          = kubernetes_namespace.namespace.metadata[0].name
+  name               = "backend"
+  docker_image       = "weatherstationproject/backend:${var.backend_image_tag}"
+  container_port     = 8443
+  external_port      = 30080
+  sa_role            = kubernetes_role.pod_executor.metadata[0].name
+  hostname           = local.hostname
+  enable_http_probes = true
 
   environment_variables = {
     PORT                = "8443"
@@ -219,14 +220,14 @@ module "backend" {
 module "socket_server" {
   source = "github.com/davidleonm/cicd-pipelines/terraform/modules/service"
 
-  namespace      = kubernetes_namespace.namespace.metadata[0].name
-  name           = "socket-server"
-  docker_image   = "weatherstationproject/socket-server:${var.socket_server_image_tag}"
-  container_port = 8443
-  external_port  = 30081
-  sa_role        = kubernetes_role.pod_executor.metadata[0].name
-  hostname       = local.hostname
-  enable_probes  = true
+  namespace          = kubernetes_namespace.namespace.metadata[0].name
+  name               = "socket-server"
+  docker_image       = "weatherstationproject/socket-server:${var.socket_server_image_tag}"
+  container_port     = 8443
+  external_port      = 30081
+  sa_role            = kubernetes_role.pod_executor.metadata[0].name
+  hostname           = local.hostname
+  enable_http_probes = true
 
   environment_variables = {
     PORT                = "8443"
@@ -260,13 +261,14 @@ module "socket_server" {
 module "web_ui" {
   source = "github.com/davidleonm/cicd-pipelines/terraform/modules/service"
 
-  namespace      = kubernetes_namespace.namespace.metadata[0].name
-  name           = "web-ui"
-  docker_image   = "weatherstationproject/web-ui:${var.web_ui_image_tag}"
-  container_port = 8443
-  external_port  = 30082
-  sa_role        = kubernetes_role.pod_executor.metadata[0].name
-  hostname       = local.hostname
+  namespace         = kubernetes_namespace.namespace.metadata[0].name
+  name              = "web-ui"
+  docker_image      = "weatherstationproject/web-ui:${var.web_ui_image_tag}"
+  container_port    = 8443
+  external_port     = 30082
+  sa_role           = kubernetes_role.pod_executor.metadata[0].name
+  hostname          = local.hostname
+  enable_tcp_probes = true
 
   environment_variables = {
     NODE_ENV     = "production"
