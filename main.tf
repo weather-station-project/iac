@@ -85,6 +85,7 @@ resource "tls_self_signed_cert" "certificate" {
 resource "helm_release" "otel_operator" {
   chart = "open-telemetry/opentelemetry-operator"
   name  = "opentelemetry-operator"
+  repository = "https://open-telemetry.github.io/opentelemetry-helm-charts"
 
   set {
     name  = "admissionWebhooks.certManager.enabled"
