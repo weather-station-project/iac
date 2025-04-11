@@ -83,8 +83,8 @@ resource "tls_self_signed_cert" "certificate" {
 }
 
 resource "helm_release" "otel_operator" {
-  name      = "open-telemetry/opentelemetry-operator"
-  chart       = "opentelemetry-operator"
+  name       = "opentelemetry-operator"
+  chart      = "opentelemetry-operator"
   repository = "https://open-telemetry.github.io/opentelemetry-helm-charts"
 
   set {
