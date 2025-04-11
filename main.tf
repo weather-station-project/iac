@@ -82,27 +82,6 @@ resource "tls_self_signed_cert" "certificate" {
   validity_period_hours = 175200 # 20 years
 }
 
-resource "helm_release" "otel_operator" {
-  name       = "opentelemetry-operator"
-  chart      = "opentelemetry-operator"
-  repository = "https://open-telemetry.github.io/opentelemetry-helm-charts"
-
-  set {
-    name  = "admissionWebhooks.certManager.enabled"
-    value = "false"
-  }
-
-  set {
-    name  = "admissionWebhooks.autoGenerateCert.enabled"
-    value = "true"
-  }
-
-  set {
-    name  = "manager.collectorImage.repository"
-    value = "otel/opentelemetry-collector-k8s"
-  }
-}
-
 resource "kubernetes_secret" "certificate_secret" {
   metadata {
     name      = "certificate-secret"
