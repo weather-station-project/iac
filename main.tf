@@ -83,8 +83,8 @@ resource "tls_self_signed_cert" "certificate" {
 }
 
 resource "helm_release" "otel_operator" {
-  chart = "open-telemetry/opentelemetry-operator"
-  name  = "opentelemetry-operator"
+  name      = "open-telemetry/opentelemetry-operator"
+  chart       = "opentelemetry-operator"
   repository = "https://open-telemetry.github.io/opentelemetry-helm-charts"
 
   set {
@@ -95,6 +95,11 @@ resource "helm_release" "otel_operator" {
   set {
     name  = "admissionWebhooks.autoGenerateCert.enabled"
     value = "true"
+  }
+
+  set {
+    name  = "manager.collectorImage.repository"
+    value = "otel/opentelemetry-collector-k8s"
   }
 }
 
