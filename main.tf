@@ -1,3 +1,11 @@
+terraform {
+  required_providers {
+    helm = {
+      source  = "hashicorp/helm"
+      version = "2.16.1"
+    }
+  }
+}
 resource "kubernetes_namespace" "namespace" {
   metadata {
     name = var.namespace
@@ -80,6 +88,21 @@ resource "tls_self_signed_cert" "certificate" {
   }
 
   validity_period_hours = 175200 # 20 years
+}
+
+resource "helm_release" "otel_operator" {
+  chart = "open-telemetry/opentelemetry-operator"
+  name  = "opentelemetry-operator"
+
+  set {
+    name  = "admissionWebhooks.certManager.enabled"
+    value = "false"
+  }
+
+  set {
+    name  = "admissionWebhooks.autoGenerateCert.enabled"
+    value = "true"
+  }
 }
 
 resource "kubernetes_secret" "certificate_secret" {
