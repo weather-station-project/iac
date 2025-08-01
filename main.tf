@@ -173,6 +173,10 @@ module "backend" {
     DATABASE_SCHEMA     = "weather_station"
     KEY_FILE            = "${local.certificates_folder}/tls.key"
     CERT_FILE           = "${local.certificates_folder}/tls.crt"
+    OTEL_EXPORTER_OTLP_ENDPOINT = "opentelemetry-collector.home-tools.svc.cluster.local:4318"
+    OTEL_DEBUG_IN_CONSOLE = "false"
+    OTEL_SERVICE_VERSION = var.backend_image_tag
+    OTEL_DEPLOYMENT_ENVIRONMENT = "staging"
   }
 
   security_context = {
