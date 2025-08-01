@@ -160,22 +160,22 @@ module "backend" {
   enable_http_probes = true
 
   environment_variables = {
-    PORT                = "8443"
-    NODE_ENV            = "production"
-    JWT_SECRET          = local.jwt_secret
-    JWT_EXPIRATION_TIME = "1h"
-    LOG_LEVEL           = "info"
-    TZ                  = var.time_zone
-    DATABASE_HOST       = module.database.fully_qualified_name
-    DATABASE_NAME       = "weather_station"
-    DATABASE_USER       = "read_write"
-    DATABASE_PASSWORD   = local.database_read_write_user_password
-    DATABASE_SCHEMA     = "weather_station"
-    KEY_FILE            = "${local.certificates_folder}/tls.key"
-    CERT_FILE           = "${local.certificates_folder}/tls.crt"
+    PORT                        = "8443"
+    NODE_ENV                    = "production"
+    JWT_SECRET                  = local.jwt_secret
+    JWT_EXPIRATION_TIME         = "1h"
+    LOG_LEVEL                   = "info"
+    TZ                          = var.time_zone
+    DATABASE_HOST               = module.database.fully_qualified_name
+    DATABASE_NAME               = "weather_station"
+    DATABASE_USER               = "read_write"
+    DATABASE_PASSWORD           = local.database_read_write_user_password
+    DATABASE_SCHEMA             = "weather_station"
+    KEY_FILE                    = "${local.certificates_folder}/tls.key"
+    CERT_FILE                   = "${local.certificates_folder}/tls.crt"
     OTEL_EXPORTER_OTLP_ENDPOINT = "opentelemetry-collector.home-tools.svc.cluster.local:4318"
-    OTEL_DEBUG_IN_CONSOLE = "false"
-    OTEL_SERVICE_VERSION = var.backend_image_tag
+    OTEL_DEBUG_IN_CONSOLE       = "false"
+    OTEL_SERVICE_VERSION        = var.backend_image_tag
     OTEL_DEPLOYMENT_ENVIRONMENT = "staging"
   }
 
