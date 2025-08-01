@@ -27,6 +27,7 @@ locals {
   jwt_secret                        = random_password.passwords[2].result
   socket_server_admin_password      = random_password.passwords[3].result
   certificates_folder               = "/etc/ssl/certs"
+  otel_endpoint_url = "opentelemetry-collector.home-tools.svc.cluster.local:4318"
 }
 
 resource "kubernetes_role" "pod_executor" {
@@ -173,10 +174,10 @@ module "backend" {
     DATABASE_SCHEMA             = "weather_station"
     KEY_FILE                    = "${local.certificates_folder}/tls.key"
     CERT_FILE                   = "${local.certificates_folder}/tls.crt"
-    OTEL_EXPORTER_OTLP_ENDPOINT = "opentelemetry-collector.home-tools.svc.cluster.local:4318"
+    OTEL_EXPORTER_OTLP_ENDPOINT = local.otel_endpoint_url
     OTEL_DEBUG_IN_CONSOLE       = "false"
     OTEL_SERVICE_VERSION        = var.backend_image_tag
-    OTEL_DEPLOYMENT_ENVIRONMENT = "staging"
+    OTEL_DEPLOYMENT_ENVIRONMENT = kubernetes_namespace.namespace.metadata[0].name
   }
 
   security_context = {
