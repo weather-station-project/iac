@@ -27,7 +27,7 @@ locals {
   jwt_secret                        = random_password.passwords[2].result
   socket_server_admin_password      = random_password.passwords[3].result
   certificates_folder               = "/etc/ssl/certs"
-  otel_endpoint_url = "opentelemetry-collector.home-tools.svc.cluster.local:4318"
+  otel_endpoint_url                 = "opentelemetry-collector.home-tools.svc.cluster.local:4318"
 }
 
 resource "kubernetes_role" "pod_executor" {
