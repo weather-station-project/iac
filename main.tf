@@ -219,6 +219,10 @@ module "socket_server" {
     TZ                  = var.time_zone
     KEY_FILE            = "${local.certificates_folder}/tls.key"
     CERT_FILE           = "${local.certificates_folder}/tls.crt"
+    OTEL_EXPORTER_OTLP_ENDPOINT = local.otel_endpoint_url
+    OTEL_DEBUG_IN_CONSOLE       = "false"
+    OTEL_SERVICE_VERSION        = var.socket_server_image_tag
+    OTEL_DEPLOYMENT_ENVIRONMENT = kubernetes_namespace.namespace.metadata[0].name
   }
 
   security_context = {
