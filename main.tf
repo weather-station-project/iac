@@ -210,15 +210,15 @@ module "socket_server" {
   enable_http_probes = true
 
   environment_variables = {
-    PORT                = "8443"
-    NODE_ENV            = "production"
-    JWT_SECRET          = local.jwt_secret
-    JWT_EXPIRATION_TIME = "1h"
-    LOG_LEVEL           = "info"
-    ADMIN_PASSWORD      = local.socket_server_admin_password
-    TZ                  = var.time_zone
-    KEY_FILE            = "${local.certificates_folder}/tls.key"
-    CERT_FILE           = "${local.certificates_folder}/tls.crt"
+    PORT                        = "8443"
+    NODE_ENV                    = "production"
+    JWT_SECRET                  = local.jwt_secret
+    JWT_EXPIRATION_TIME         = "1h"
+    LOG_LEVEL                   = "info"
+    ADMIN_PASSWORD              = local.socket_server_admin_password
+    TZ                          = var.time_zone
+    KEY_FILE                    = "${local.certificates_folder}/tls.key"
+    CERT_FILE                   = "${local.certificates_folder}/tls.crt"
     OTEL_EXPORTER_OTLP_ENDPOINT = local.otel_endpoint_url
     OTEL_DEBUG_IN_CONSOLE       = "false"
     OTEL_SERVICE_VERSION        = var.socket_server_image_tag
