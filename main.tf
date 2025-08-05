@@ -255,15 +255,15 @@ module "web_ui" {
   enable_tcp_probes = true
 
   environment_variables = {
-    NODE_ENV     = "production"
-    DNS_RESOLVER = "kube-dns.kube-system.svc.cluster.local"
-    BACKEND_URL  = "https://${module.backend.fully_qualified_name}:${module.backend.container_port}"
-    SOCKET_URL   = "https://${module.socket_server.fully_qualified_name}:${module.socket_server.container_port}"
-    LOGIN        = "dashboard"
-    PASSWORD     = local.database_read_only_user_password
-    TZ           = var.time_zone
-    KEY_FILE     = "${local.certificates_folder}/tls.key"
-    CERT_FILE    = "${local.certificates_folder}/tls.crt"
+    NODE_ENV                    = "production"
+    DNS_RESOLVER                = "kube-dns.kube-system.svc.cluster.local"
+    BACKEND_URL                 = "https://${module.backend.fully_qualified_name}:${module.backend.container_port}"
+    SOCKET_URL                  = "https://${module.socket_server.fully_qualified_name}:${module.socket_server.container_port}"
+    LOGIN                       = "dashboard"
+    PASSWORD                    = local.database_read_only_user_password
+    TZ                          = var.time_zone
+    KEY_FILE                    = "${local.certificates_folder}/tls.key"
+    CERT_FILE                   = "${local.certificates_folder}/tls.crt"
     OTEL_EXPORTER_OTLP_ENDPOINT = local.otel_endpoint_url
     OTEL_DEBUG_IN_CONSOLE       = "false"
     OTEL_SERVICE_VERSION        = var.web_ui_image_tag
