@@ -265,7 +265,7 @@ module "web_ui" {
     KEY_FILE                    = "${local.certificates_folder}/tls.key"
     CERT_FILE                   = "${local.certificates_folder}/tls.crt"
     OTEL_EXPORTER_OTLP_ENDPOINT = local.otel_endpoint_url
-    OTEL_FAKE_ENDPOINT          = "https://192.168.1.69:${external_port}"
+    OTEL_FAKE_ENDPOINT          = "https://192.168.1.69:30082"
     OTEL_DEBUG_IN_CONSOLE       = "false"
     OTEL_SERVICE_VERSION        = var.web_ui_image_tag
     OTEL_DEPLOYMENT_ENVIRONMENT = kubernetes_namespace.namespace.metadata[0].name
